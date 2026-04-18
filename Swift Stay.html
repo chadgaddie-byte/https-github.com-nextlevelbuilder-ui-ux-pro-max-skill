@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Swift Stay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #EEF4FB;
+    -webkit-font-smoothing: antialiased;
+    color: #0F1B2D;
+    position: relative;
+    overflow-x: hidden;
+  }
+  /* Ambient blue backdrop with drifting blurred orbs for liquid-glass context */
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.55;
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before {
+    width: 620px; height: 620px;
+    background: radial-gradient(circle, #6FA4E8 0%, transparent 70%);
+    top: -180px; left: -120px;
+  }
+  body::after {
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, #8FC8E8 0%, transparent 70%);
+    bottom: -140px; right: -80px;
+  }
+  input:focus { border-color: #2F6BE0 !important; box-shadow: 0 0 0 3px rgba(47,107,224,0.14); }
+  button:hover { opacity: 0.94; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: rgba(47,107,224,0.25); border-radius: 3px; }
+  @media (max-width: 768px) {
+    aside.sidebar-root { display: none !important; }
+    main.main-root { margin-left: 0 !important; padding: 20px 16px 80px !important; }
+    .two-col { grid-template-columns: 1fr !important; }
+    .login-root { flex-direction: column !important; }
+    .login-right { width: 100% !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel">
+const { useState } = React;
+
+// Blue palette
+const C = {
+  primary: '#2F6BE0',       // main blue (replaces orange)
+  primaryDark: '#1E4FB8',
+  primarySoft: '#6FA4E8',   // lighter highlight (replaces F4A574)
+  primaryBg: '#EBF2FF',     // soft blue bg (replaces FFF5EE)
+  primaryBg2: '#F5F9FF',
+  ink: '#0F1B2D',           // near-navy (replaces 1A1D21)
+  ink2: '#2A3A55',
+  ink3: '#5A6A85',          // muted (replaces 7C818A)
+  line: '#E4ECF7',          // subtle line (replaces F0F1F3)
+  line2: '#CAD7EA',
+  panel: '#F5F7FB',         // surface (replaces F5F5F2)
+  glassBg: 'rgba(255,255,255,0.65)',
+  glassBgDark: 'rgba(16,30,55,0.55)',
+  glassBorder: 'rgba(255,255,255,0.5)',
+  glassBorderDark: 'rgba(255,255,255,0.1)',
+  green: '#1F9D6A', greenBg: '#E3F6EC',
+  red: '#C8364B', redBg: '#FBEAEE',
+  blue: '#2F6BE0', blueBg: '#EBF2FF',
+};
+
+// Icons
+const I = {
+  Home: (p) => <svg width={p?.s||20} height={p?.s||20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  Search: (p) => <svg width={p?.s||20} height={p?.s||20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+  Doc: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  User: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  Arrow: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+  Back: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>,
+  Zap: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+  Shield: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  Lock: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+  Wifi: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>,
+  Car: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11 .84 11.86a1 1 0 0 0-.84.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>,
+  Drop: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>,
+  Bed: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>,
+  Bld: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><path d="M9 18h6v4H9z"/></svg>,
+  Log: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+};
+
+// Liquid glass helpers
+const glass = {
+  background: 'linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.55) 100%)',
+  backdropFilter: 'blur(22px) saturate(160%)',
+  WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+  border: `1px solid ${C.glassBorder}`,
+  borderRadius: 16,
+  boxShadow: '0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 30px -12px rgba(47,107,224,0.18), 0 2px 6px rgba(20,40,80,0.05)',
+};
+const glassDark = {
+  background: `linear-gradient(180deg, #1E4FB8 0%, #163D90 60%, #0F2E6E 100%)`,
+  border: `1px solid rgba(255,255,255,0.1)`,
+  boxShadow: '0 1px 0 rgba(255,255,255,0.12) inset, 0 20px 40px -20px rgba(15,46,110,0.55)',
+};
+
+const Logo = ({ white }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+    <div style={{
+      width: 36, height: 36,
+      background: white
+        ? 'linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.08))'
+        : `linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`,
+      borderRadius: 10,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      boxShadow: white ? 'inset 0 1px 0 rgba(255,255,255,0.3)' : '0 6px 16px -4px rgba(47,107,224,0.5), inset 0 1px 0 rgba(255,255,255,0.25)',
+      color: '#fff',
+      border: white ? '1px solid rgba(255,255,255,0.2)' : 'none'
+    }}>
+      <I.Home s={18} />
+    </div>
+    <div>
+      <div style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 18, color: white ? "#fff" : C.ink, lineHeight: 1 }}>
+        Swift<span style={{ color: white ? C.primarySoft : C.primary }}>Stay</span>
+      </div>
+      <div style={{ fontSize: 9, color: white ? "rgba(255,255,255,0.6)" : C.ink3, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase" }}>rent easy</div>
+    </div>
+  </div>
+);
+
+const Pill = ({ children, c = "blue" }) => {
+  const m = { blue: { bg: C.blueBg, c: C.primary }, green: { bg: C.greenBg, c: C.green }, red: { bg: C.redBg, c: C.red } };
+  return <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: 50, fontSize: 12, fontWeight: 600, background: m[c].bg, color: m[c].c, border: `1px solid ${m[c].c}22` }}>{children}</span>;
+};
+
+const Btn = ({ children, onClick, v = "primary", full, disabled }) => {
+  const styles = {
+    primary: {
+      background: disabled ? '#B8C5D8' : `linear-gradient(180deg, ${C.primary}, ${C.primaryDark})`,
+      color: "#fff",
+      boxShadow: disabled ? 'none' : `0 8px 20px -6px ${C.primary}80, inset 0 1px 0 rgba(255,255,255,0.3)`,
+    },
+    outline: { background: "rgba(255,255,255,0.7)", color: C.primary, border: `1.5px solid ${C.primary}`, backdropFilter: 'blur(8px)' },
+  };
+  return (
+    <button onClick={disabled ? undefined : onClick} style={{
+      width: full ? "100%" : "auto", padding: "13px 28px", borderRadius: 12,
+      fontSize: 15, fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer",
+      fontFamily: "DM Sans", border: "none", transition: 'all 0.2s',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+      ...styles[v]
+    }}>{children}</button>
+  );
+};
+
+const Card = ({ children, style = {}, onClick, variant = 'glass' }) => {
+  const base = variant === 'solid'
+    ? { background: '#fff', borderRadius: 16, border: `1px solid ${C.line}`, boxShadow: '0 2px 12px rgba(20,40,80,0.04)' }
+    : glass;
+  return <div onClick={onClick} style={{ ...base, ...style }}>{children}</div>;
+};
+
+// Sidebar (desktop)
+const Sidebar = ({ active, setScreen }) => (
+  <aside className="sidebar-root" style={{
+    width: 240, color: "#fff",
+    display: "flex", flexDirection: "column",
+    position: "fixed", top: 16, left: 16, bottom: 16, zIndex: 200,
+    borderRadius: 20,
+    ...glassDark,
+    overflow: 'hidden'
+  }}>
+    <div style={{ padding: "24px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+      <Logo white />
+    </div>
+    <nav style={{ flex: 1, padding: "16px 12px", display: "flex", flexDirection: "column", gap: 4 }}>
+      {[
+        { id: "home", icon: <I.Home />, label: "Home" },
+        { id: "search", icon: <I.Search />, label: "Find a Space" },
+        { id: "statement", icon: <I.Doc />, label: "Statement" },
+        { id: "profile", icon: <I.User />, label: "Profile" },
+      ].map(item => (
+        <button key={item.id} onClick={() => setScreen(item.id)} style={{
+          display: "flex", alignItems: "center", gap: 12, padding: "12px 14px",
+          borderRadius: 10, border: "none", cursor: "pointer", fontFamily: "DM Sans",
+          fontSize: 14, fontWeight: active === item.id ? 600 : 400, width: "100%", textAlign: "left",
+          background: active === item.id
+            ? 'rgba(255,255,255,0.18)'
+            : "transparent",
+          color: active === item.id ? '#fff' : "rgba(255,255,255,0.75)",
+          transition: "all 0.2s",
+          boxShadow: active === item.id ? 'inset 0 1px 0 rgba(255,255,255,0.2)' : 'none',
+          border: active === item.id ? '1px solid rgba(255,255,255,0.22)' : '1px solid transparent'
+        }}>{item.icon} {item.label}</button>
+      ))}
+    </nav>
+    <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <button onClick={() => setScreen("login")} style={{
+        display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 10,
+        border: "none", cursor: "pointer", fontFamily: "DM Sans", fontSize: 14, width: "100%",
+        background: "transparent", color: "rgba(255,255,255,0.65)", textAlign: "left"
+      }}><I.Log /> Log Out</button>
+    </div>
+  </aside>
+);
+
+const TopBar = ({ title, sub, onBack, setScreen }) => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32, gap: 20 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0, flex: 1 }}>
+      {onBack && <button onClick={onBack} style={{
+        width: 38, height: 38, borderRadius: 10, border: `1px solid ${C.line2}`,
+        background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)',
+        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+        color: C.ink, flexShrink: 0
+      }}><I.Back /></button>}
+      <div style={{ minWidth: 0 }}>
+        <h1 style={{ fontFamily: "Outfit", fontSize: 26, fontWeight: 800, color: C.ink, letterSpacing: '-0.01em' }}>{title}</h1>
+        {sub && <p style={{ fontSize: 14, color: C.ink3, marginTop: 2 }}>{sub}</p>}
+      </div>
+    </div>
+    <div onClick={() => setScreen("profile")} style={{
+      width: 42, height: 42, borderRadius: 12,
+      background: `linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      color: "#fff", fontFamily: "Outfit", fontWeight: 700, fontSize: 14,
+      cursor: "pointer", flexShrink: 0,
+      boxShadow: '0 6px 16px -4px rgba(47,107,224,0.5), inset 0 1px 0 rgba(255,255,255,0.3)'
+    }}>CG</div>
+  </div>
+);
+
+// ─── Screens ───
+
+const LoginScreen = ({ setScreen }) => (
+  <div className="login-root" style={{ minHeight: "100vh", display: "flex", position: 'relative', zIndex: 1 }}>
+    <div style={{
+      flex: 1,
+      background: `linear-gradient(160deg, #0F1B2D 0%, #1E3A6B 55%, #2F6BE0 100%)`,
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 40,
+      position: "relative", overflow: "hidden"
+    }}>
+      <div style={{ position: "absolute", top: "8%", left: "8%", width: 340, height: 340, borderRadius: "50%", background: "radial-gradient(circle, rgba(111,164,232,0.35), transparent 70%)", filter: 'blur(20px)' }} />
+      <div style={{ position: "absolute", bottom: "12%", right: "5%", width: 260, height: 260, borderRadius: "50%", background: "radial-gradient(circle, rgba(143,200,232,0.25), transparent 70%)", filter: 'blur(20px)' }} />
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 440, color: "#fff" }}>
+        <Logo white />
+        <h2 style={{ fontFamily: "Outfit", fontSize: 42, fontWeight: 800, marginTop: 40, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+          Your next apartment is <span style={{ color: C.primarySoft }}>one click away</span>
+        </h2>
+        <p style={{ fontSize: 16, color: "rgba(255,255,255,0.68)", marginTop: 18, lineHeight: 1.7 }}>
+          No lease. No hassle. Pick a date, choose your space, and move in today. Swift Stay makes renting as easy as booking a hotel.
+        </p>
+        <div style={{ display: "flex", gap: 24, marginTop: 32 }}>
+          {[{ n: "100+", l: "Happy tenants" }, { n: "Same day", l: "Move-in" }, { n: "No", l: "Lease required" }].map((s, i) => (
+            <div key={i}><div style={{ fontFamily: "Outfit", fontSize: 22, fontWeight: 700, color: C.primarySoft }}>{s.n}</div><div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 2 }}>{s.l}</div></div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <div className="login-right" style={{ width: 520, display: "flex", alignItems: "center", justifyContent: "center", padding: 48, background: 'rgba(245,249,255,0.7)', backdropFilter: 'blur(30px)' }}>
+      <div style={{ width: "100%", maxWidth: 380 }}>
+        <h2 style={{ fontFamily: "Outfit", fontSize: 30, fontWeight: 800, marginBottom: 8, color: C.ink }}>Welcome back</h2>
+        <p style={{ color: C.ink3, fontSize: 15, marginBottom: 32 }}>Log in to manage your stay</p>
+        {[{ l: "Email Address", p: "you@email.com", t: "email" }, { l: "Password", p: "Enter your password", t: "password" }].map((f, i) => (
+          <div key={i} style={{ marginBottom: 20 }}>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6, color: C.ink2 }}>{f.l}</label>
+            <input type={f.t} placeholder={f.p} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.line2}`, fontSize: 15, fontFamily: "DM Sans", outline: "none", background: 'rgba(255,255,255,0.8)' }} />
+          </div>
+        ))}
+        <Btn onClick={() => setScreen("home")} full>Log In</Btn>
+        <p style={{ textAlign: "center", marginTop: 16, fontSize: 14, color: C.primary, cursor: "pointer", fontWeight: 500 }}>Forgot your password?</p>
+        <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 24, paddingTop: 24, textAlign: "center" }}>
+          <p style={{ fontSize: 14, color: C.ink3 }}>Don't have an account? <span style={{ color: C.primary, fontWeight: 600, cursor: "pointer" }}>Create one</span></p>
+        </div>
+        <div style={{ textAlign: "center", marginTop: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, color: C.ink3, fontSize: 12 }}><I.Lock /> Secured & encrypted</div>
+      </div>
+    </div>
+  </div>
+);
+
+const Shell = ({ active, setScreen, children }) => (
+  <div style={{ display: "flex", minHeight: "100vh", position: 'relative', zIndex: 1 }}>
+    <Sidebar active={active} setScreen={setScreen} />
+    <main className="main-root" style={{ flex: 1, marginLeft: 272, padding: "32px 40px 60px" }}>{children}</main>
+  </div>
+);
+
+const HomeScreen = ({ setScreen }) => (
+  <Shell active="home" setScreen={setScreen}>
+    <TopBar title={<>Hello, <span style={{ color: C.primary }}>Chad</span> 👋</>} sub="Find your next space or manage your stay" setScreen={setScreen} />
+    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
+      <Card style={{ padding: 0, overflow: "hidden", gridColumn: "1 / -1", border: 'none' }}>
+        <div style={{
+          background: `linear-gradient(135deg, ${C.primaryDark} 0%, ${C.primary} 55%, ${C.primarySoft} 100%)`,
+          padding: "40px 36px", color: "#fff",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: 20, position: 'relative', overflow: 'hidden'
+        }}>
+          <div style={{ position: 'absolute', top: -60, right: -60, width: 260, height: 260, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', filter: 'blur(20px)' }}/>
+          <div style={{ maxWidth: 460, position: 'relative' }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}><I.Zap /> <span style={{ fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Instant Booking</span></div>
+            <h3 style={{ fontFamily: "Outfit", fontSize: 28, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.01em' }}>Ready to move in?</h3>
+            <p style={{ fontSize: 15, opacity: 0.92 }}>Pick a date and you could be in your new place today. No lease, no waiting.</p>
+          </div>
+          <button onClick={() => setScreen("search")} style={{
+            background: "rgba(255,255,255,0.95)", color: C.primary, border: "none",
+            padding: "14px 32px", borderRadius: 12, fontWeight: 700, fontSize: 15,
+            cursor: "pointer", fontFamily: "DM Sans",
+            display: "flex", alignItems: "center", gap: 8, whiteSpace: "nowrap",
+            boxShadow: '0 8px 20px -6px rgba(0,0,0,0.25)',
+            position: 'relative', zIndex: 1
+          }}>Book a Space <I.Arrow /></button>
+        </div>
+      </Card>
+
+      <Card style={{ padding: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <h3 style={{ fontFamily: "Outfit", fontSize: 17, fontWeight: 700, color: C.ink }}>My Space</h3>
+          <Pill>No active stay</Pill>
+        </div>
+        <p style={{ fontSize: 14, color: C.ink3, lineHeight: 1.6 }}>You don't have an active space yet. Browse available apartments and book your stay.</p>
+      </Card>
+
+      <Card style={{ padding: 24 }}>
+        <h3 style={{ fontFamily: "Outfit", fontSize: 17, fontWeight: 700, marginBottom: 12, color: C.ink }}>Roomie Invitations</h3>
+        <div style={{ padding: "14px 18px", background: 'rgba(47,107,224,0.06)', border: `1px solid ${C.line}`, borderRadius: 10, fontSize: 14, color: C.ink3 }}>No pending invitations</div>
+      </Card>
+    </div>
+
+    <Card style={{ padding: 24, marginBottom: 24 }}>
+      <h3 style={{ fontFamily: "Outfit", fontSize: 17, fontWeight: 700, marginBottom: 8, color: C.ink }}>Upcoming Visits</h3>
+      <div style={{ padding: "14px 18px", background: 'rgba(47,107,224,0.06)', border: `1px solid ${C.line}`, borderRadius: 10, fontSize: 14, color: C.ink3 }}>No upcoming visits scheduled</div>
+    </Card>
+
+    <Card style={{ padding: 28 }}>
+      <h3 style={{ fontFamily: "Outfit", fontSize: 17, fontWeight: 700, marginBottom: 20, color: C.ink }}>How Swift Stay works</h3>
+      <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+        {[{ s: "1", t: "Pick a date", d: "Choose when you want to move in — even today" }, { s: "2", t: "Choose your space", d: "Browse apartments at York House and find your fit" }, { s: "3", t: "Pay & move in", d: "Secure online payment, get your keys same day" }].map(item => (
+          <div key={item.s} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: C.primaryBg, color: C.primary, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Outfit", fontWeight: 700, fontSize: 15, flexShrink: 0, border: `1px solid ${C.line2}` }}>{item.s}</div>
+            <div><div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4, color: C.ink }}>{item.t}</div><div style={{ fontSize: 13, color: C.ink3, lineHeight: 1.5 }}>{item.d}</div></div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  </Shell>
+);
+
+const SearchScreen = ({ setScreen }) => (
+  <Shell active="search" setScreen={setScreen}>
+    <TopBar title="Find your place" sub="Search available apartments by move-in date" setScreen={setScreen} />
+    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "400px 1fr", gap: 32, alignItems: "start" }}>
+      <Card style={{ padding: 28 }}>
+        <h3 style={{ fontFamily: "Outfit", fontSize: 17, fontWeight: 700, marginBottom: 16, color: C.ink }}>When do you want to move in?</h3>
+        <p style={{ fontSize: 14, color: C.ink3, lineHeight: 1.6, marginBottom: 20 }}>Minimum stay is one full calendar month. Move in before the 1st and you'll only pay the pro-rata rate.</p>
+        <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6, color: C.ink2 }}>Move-In Date</label>
+        <input type="date" defaultValue="2026-04-10" style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.line2}`, fontSize: 15, fontFamily: "DM Sans", outline: "none", marginBottom: 16, background: 'rgba(255,255,255,0.8)' }} />
+        <div style={{ padding: "12px 16px", background: C.blueBg, border: `1px solid ${C.primary}22`, borderRadius: 10, marginBottom: 20, display: "flex", gap: 10, alignItems: "flex-start" }}>
+          <span style={{ color: C.primary, marginTop: 1 }}><I.Zap /></span>
+          <p style={{ fontSize: 13, color: C.primaryDark, lineHeight: 1.5, fontWeight: 500 }}>Your date is before the 25th — you'll only pay pro-rata for this month</p>
+        </div>
+        <Btn onClick={() => setScreen("building")} full>Search Stays</Btn>
+      </Card>
+      <Card style={{ padding: 28, background: `linear-gradient(135deg, rgba(235,242,255,0.9), rgba(255,255,255,0.7))` }}>
+        <div style={{ textAlign: "center", padding: "40px 20px" }}>
+          <div style={{ width: 64, height: 64, borderRadius: 16, background: `linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: '#fff', boxShadow: `0 10px 24px -6px ${C.primary}80` }}><I.Bld /></div>
+          <h4 style={{ fontFamily: "Outfit", fontSize: 20, fontWeight: 700, marginBottom: 8, color: C.ink }}>York House</h4>
+          <p style={{ fontSize: 14, color: C.ink3, lineHeight: 1.6, maxWidth: 300, margin: "0 auto" }}>Our flagship building in Johannesburg. Fully furnished apartments from R2,000/month with WiFi, parking, and 24/7 security.</p>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 20, flexWrap: 'wrap' }}>
+            {[{ icon: <I.Wifi />, l: "WiFi" }, { icon: <I.Car />, l: "Parking" }, { icon: <I.Shield />, l: "Security" }, { icon: <I.Drop />, l: "Water" }].map((a, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: C.ink2 }}>{a.icon} {a.l}</div>
+            ))}
+          </div>
+        </div>
+      </Card>
+    </div>
+  </Shell>
+);
+
+const BuildingScreen = ({ setScreen }) => (
+  <Shell active="search" setScreen={setScreen}>
+    <TopBar title="Available locations" sub="Properties available from 10 April 2026" onBack={() => setScreen("search")} setScreen={setScreen} />
+    <Card style={{ padding: 0, overflow: "hidden", cursor: "pointer", maxWidth: 820 }} onClick={() => setScreen("units")}>
+      <div style={{ height: 240, background: `linear-gradient(135deg, ${C.ink} 0%, ${C.primaryDark} 60%, ${C.primary} 100%)`, display: "flex", alignItems: "flex-end", padding: 28, position: "relative" }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(45deg, transparent, transparent 14px, rgba(255,255,255,0.03) 14px, rgba(255,255,255,0.03) 15px)' }}/>
+        <div style={{ position: "absolute", top: 16, right: 16 }}><Pill c="green">33 Spaces Available</Pill></div>
+        <div style={{ color: "#fff", position: 'relative' }}>
+          <h3 style={{ fontFamily: "Outfit", fontSize: 28, fontWeight: 800, letterSpacing: '-0.01em' }}>York House</h3>
+          <p style={{ fontSize: 14, opacity: 0.78, marginTop: 4 }}>Johannesburg, Gauteng</p>
+        </div>
+      </div>
+      <div style={{ padding: 28, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+        <div style={{ display: "flex", gap: 20, flexWrap: 'wrap' }}>
+          {[{ icon: <I.Bed />, l: "1–3 BR apartments" }, { icon: <I.Wifi />, l: "WiFi included" }, { icon: <I.Car />, l: "Parking" }, { icon: <I.Shield />, l: "24/7 Security" }].map((a, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, color: C.ink2 }}>{a.icon} {a.l}</div>
+          ))}
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <span style={{ fontSize: 13, color: C.ink3 }}>From </span>
+          <span style={{ fontFamily: "Outfit", fontSize: 26, fontWeight: 800, color: C.primary }}>R 2,000</span>
+          <span style={{ fontSize: 14, color: C.ink3 }}>/mo</span>
+        </div>
+      </div>
+    </Card>
+  </Shell>
+);
+
+const UNITS = [
+  { name: "Apartment 0108", type: "2BR Regular", price: "R 4,500" },
+  { name: "Apartment 0109", type: "3BR Small", price: "R 6,000" },
+  { name: "Apartment 0123", type: "2BR Regular", price: "R 4,500" },
+  { name: "Apartment 0124", type: "2BR Regular", price: "R 4,500" },
+  { name: "Apartment 0127", type: "1BR Regular", price: "R 3,200" },
+  { name: "Apartment 0131", type: "1BR Regular", price: "R 3,200" },
+];
+
+const UnitsScreen = ({ setScreen }) => (
+  <Shell active="search" setScreen={setScreen}>
+    <TopBar title="York House" sub="Choose the apartment that works for you" onBack={() => setScreen("building")} setScreen={setScreen} />
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+      {UNITS.map((u, i) => (
+        <Card key={i} style={{ padding: 20, cursor: "pointer", transition: "all 0.2s" }} onClick={() => setScreen("details")}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: C.primaryBg, display: "flex", alignItems: "center", justifyContent: "center", color: C.primary, flexShrink: 0, border: `1px solid ${C.line2}` }}><I.Home /></div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "Outfit", fontSize: 15, fontWeight: 700, color: C.ink }}>{u.name}</div>
+              <div style={{ fontSize: 13, color: C.ink3 }}>{u.type}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontFamily: "Outfit", fontSize: 18, fontWeight: 700, color: C.primary }}>{u.price}</div>
+              <div style={{ fontSize: 11, color: C.ink3 }}>/month</div>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </Shell>
+);
+
+const DetailsScreen = ({ setScreen }) => (
+  <Shell active="search" setScreen={setScreen}>
+    <TopBar title="Apartment 0123" sub="2BR Regular · York House" onBack={() => setScreen("units")} setScreen={setScreen} />
+    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 28, alignItems: "start" }}>
+      <div>
+        <Card style={{ padding: 0, overflow: "hidden", marginBottom: 20 }}>
+          <div style={{ height: 280, background: `linear-gradient(135deg, ${C.primaryDark}, ${C.primary}, ${C.primarySoft})`, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)", fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'DM Sans', position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(45deg, transparent, transparent 16px, rgba(255,255,255,0.05) 16px, rgba(255,255,255,0.05) 17px)' }}/>
+            [ apartment photos ]
+          </div>
+        </Card>
+        <Card style={{ padding: 28 }}>
+          <h3 style={{ fontFamily: "Outfit", fontSize: 18, fontWeight: 700, marginBottom: 12, color: C.ink }}>About this space</h3>
+          <p style={{ fontSize: 15, color: C.ink2, lineHeight: 1.7, marginBottom: 20 }}>A well-sized 2-bedroom apartment ideal for shared living or a small family. Enjoy private bedrooms and a comfortable living space, with tiled floors and a modern kitchen — all within a safe and secure building.</p>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 24 }}>
+            {["2 Bedrooms", "1 Bathroom", "Kitchen", "Tiled floors", "Secure building"].map((f, i) => (
+              <span key={i} style={{ padding: "6px 14px", borderRadius: 8, background: 'rgba(47,107,224,0.06)', border: `1px solid ${C.line}`, fontSize: 13, fontWeight: 500, color: C.ink2 }}>{f}</span>
+            ))}
+          </div>
+          <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 12, color: C.ink }}>Amenities</h4>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {[{ icon: <I.Wifi />, n: "WiFi included" }, { icon: <I.Car />, n: "Parking available" }, { icon: <I.Shield />, n: "24/7 security" }, { icon: <I.Drop />, n: "Water included" }].map((a, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", fontSize: 14, color: C.ink2 }}>
+                <span style={{ color: C.primary }}>{a.icon}</span> {a.n}
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+      <Card style={{ padding: 28, position: "sticky", top: 32 }}>
+        <div style={{ fontFamily: "Outfit", fontSize: 34, fontWeight: 800, color: C.primary, marginBottom: 4 }}>R 4,500</div>
+        <div style={{ fontSize: 14, color: C.ink3, marginBottom: 20 }}>per month · excludes move-in fees</div>
+        <div style={{ padding: "14px 16px", background: C.primaryBg, border: `1px solid ${C.primary}22`, borderRadius: 10, marginBottom: 20, fontSize: 13, color: C.primaryDark, fontWeight: 500, lineHeight: 1.5 }}>
+          Move-in from 10 April — pro-rata rate of R 3,150 for the remainder of this month
+        </div>
+        <Btn onClick={() => setScreen("confirm")} full>Book This Unit</Btn>
+        <p style={{ textAlign: "center", fontSize: 12, color: C.ink3, marginTop: 12 }}>No commitment until you confirm payment</p>
+      </Card>
+    </div>
+  </Shell>
+);
+
+const ConfirmScreen = ({ setScreen }) => {
+  const [c1, setC1] = useState(false);
+  const [c2, setC2] = useState(false);
+  return (
+  <Shell active="search" setScreen={setScreen}>
+    <TopBar title="Confirm your booking" sub="Review the details before payment" onBack={() => setScreen("details")} setScreen={setScreen} />
+    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 28, alignItems: "start", maxWidth: 980 }}>
+      <Card style={{ padding: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24, paddingBottom: 20, borderBottom: `1px solid ${C.line}` }}>
+          <div style={{ width: 48, height: 48, borderRadius: 12, background: C.primaryBg, display: "flex", alignItems: "center", justifyContent: "center", color: C.primary, border: `1px solid ${C.line2}` }}><I.Home /></div>
+          <div><div style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, color: C.ink }}>Apartment 0123</div><div style={{ fontSize: 13, color: C.ink3 }}>2BR Regular · York House</div></div>
+        </div>
+        <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 16, color: C.ink }}>Cost Breakdown</h4>
+        {[{ l: "Booking Admin Fee", p: "1 – 30 April 2026", a: "R 350.00" }, { l: "Key Deposit", p: "1 – 30 April 2026", a: "R 750.00" }, { l: "2BR Regular Apartment", p: "10 – 30 April 2026 (Pro-rata)", a: "R 3,150.00" }].map((item, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "14px 0", borderBottom: i < 2 ? `1px solid ${C.line}` : "none" }}>
+            <div><div style={{ fontSize: 14, fontWeight: 500, color: C.ink }}>{item.l}</div><div style={{ fontSize: 12, color: C.ink3, marginTop: 2 }}>{item.p}</div></div>
+            <div style={{ fontSize: 15, fontWeight: 600, fontFamily: "Outfit", color: C.ink }}>{item.a}</div>
+          </div>
+        ))}
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "18px 0 0", marginTop: 8, borderTop: `2px solid ${C.ink}` }}>
+          <div style={{ fontFamily: "Outfit", fontSize: 17, fontWeight: 700, color: C.ink }}>Total</div>
+          <div style={{ fontFamily: "Outfit", fontSize: 26, fontWeight: 800, color: C.primary }}>R 4,250.00</div>
+        </div>
+      </Card>
+      <Card style={{ padding: 28, position: "sticky", top: 32 }}>
+        <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 16, color: C.ink }}>Before you proceed</h4>
+        {[
+          { t: "I understand this is a short term stay, not permanent accommodation", s: c1, set: setC1 },
+          { t: "I have read the Booking Terms & Conditions", s: c2, set: setC2 }
+        ].map((item, i) => (
+          <label key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", cursor: "pointer", fontSize: 14, color: C.ink2, lineHeight: 1.5, marginBottom: 14 }} onClick={() => item.set(!item.s)}>
+            <div style={{ width: 20, height: 20, borderRadius: 5, border: `1.5px solid ${item.s ? C.primary : C.line2}`, background: item.s ? C.primary : '#fff', display: 'grid', placeItems: 'center', flexShrink: 0, marginTop: 1 }}>
+              {item.s && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+            </div>
+            {item.t}
+          </label>
+        ))}
+        <div style={{ marginTop: 8 }}><Btn onClick={() => setScreen("payment")} full disabled={!(c1 && c2)}>Confirm & Pay</Btn></div>
+      </Card>
+    </div>
+  </Shell>
+);
+};
+
+const PaymentScreen = ({ setScreen }) => (
+  <Shell active="search" setScreen={setScreen}>
+    <TopBar title="Payment" sub="Complete your booking" onBack={() => setScreen("confirm")} setScreen={setScreen} />
+    <div style={{ maxWidth: 580 }}>
+      <Card style={{ padding: 24, marginBottom: 20, background: `linear-gradient(135deg, ${C.primaryBg}, rgba(255,255,255,0.6))`, border: `1.5px solid ${C.primary}44` }}>
+        <div style={{ fontSize: 13, color: C.ink3, marginBottom: 4 }}>Amount Due</div>
+        <div style={{ fontFamily: "Outfit", fontSize: 38, fontWeight: 800, color: C.ink }}>R 4,250.00</div>
+        <div style={{ marginTop: 8, fontSize: 13, color: C.ink3 }}>Invoice #INV20260407-0005</div>
+      </Card>
+      <Card style={{ padding: 28 }}>
+        <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 20, color: C.ink }}>Card Details</h4>
+        {[{ l: "Card Number", p: "0000 0000 0000 0000" }, { l: "Card Holder", p: "Name on card" }].map((f, i) => (
+          <div key={i} style={{ marginBottom: 18 }}>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6, color: C.ink2 }}>{f.l}</label>
+            <input placeholder={f.p} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.line2}`, fontSize: 15, fontFamily: "DM Sans", outline: "none", background: 'rgba(255,255,255,0.8)' }} />
+          </div>
+        ))}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+          {[{ l: "CVV", p: "123" }, { l: "Expiry", p: "MM / YY" }].map((f, i) => (
+            <div key={i}><label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6, color: C.ink2 }}>{f.l}</label><input placeholder={f.p} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.line2}`, fontSize: 15, fontFamily: "DM Sans", outline: "none", background: 'rgba(255,255,255,0.8)' }} /></div>
+          ))}
+        </div>
+        <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 14, marginTop: 8, color: C.ink }}>Billing Address</h4>
+        {[{ l: "Country", p: "South Africa" }, { l: "City", p: "Johannesburg" }, { l: "Postal Code", p: "2000" }, { l: "Street Address", p: "123 Main Street" }, { l: "Email", p: "you@email.com" }].map((f, i) => (
+          <div key={i} style={{ marginBottom: 14 }}>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6, color: C.ink2 }}>{f.l}</label>
+            <input placeholder={f.p} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.line2}`, fontSize: 15, fontFamily: "DM Sans", outline: "none", background: 'rgba(255,255,255,0.8)' }} />
+          </div>
+        ))}
+        <Btn onClick={() => setScreen("statement")} full>Pay Now</Btn>
+        <div style={{ textAlign: "center", marginTop: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, color: C.ink3, fontSize: 12 }}><I.Lock /> Secured & encrypted</div>
+      </Card>
+    </div>
+  </Shell>
+);
+
+const StatementScreen = ({ setScreen }) => (
+  <Shell active="statement" setScreen={setScreen}>
+    <TopBar title="Statement" sub="Your billing and payment history" setScreen={setScreen} />
+    <div style={{ maxWidth: 720 }}>
+      <Card style={{ padding: 24, marginBottom: 20, background: `linear-gradient(135deg, ${C.redBg}, rgba(255,255,255,0.6))`, border: `1.5px solid ${C.red}44` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div><div style={{ fontSize: 13, color: C.ink3, marginBottom: 4 }}>Running Balance</div><div style={{ fontFamily: "Outfit", fontSize: 34, fontWeight: 800, color: C.red }}>-R 4,250.00</div></div>
+          <Pill c="red">Unpaid</Pill>
+        </div>
+        <div style={{ fontSize: 13, color: C.ink3, marginTop: 8 }}>Due on 10/04/2026</div>
+      </Card>
+      <div style={{ marginBottom: 24 }}><Btn onClick={() => setScreen("payment")} full>Pay Outstanding Balance</Btn></div>
+      <h4 style={{ fontFamily: "Outfit", fontSize: 15, fontWeight: 700, color: C.primary, marginBottom: 16 }}>April 2026</h4>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {[{ type: "Payment", ref: "TXN20260407-0001", amount: "R 0.00", bal: "R 4,250.00", time: "07/04 - 13:58", co: "green" }, { type: "Invoice", ref: "INV20260407-0005", amount: "-R 4,250.00", bal: "R 4,250.00", time: "07/04 - 13:58", co: "red" }].map((it, i) => (
+          <Card key={i} style={{ padding: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: it.co === "green" ? C.greenBg : C.redBg, display: "flex", alignItems: "center", justifyContent: "center", color: it.co === "green" ? C.green : C.red }}><I.Doc /></div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: C.ink }}>{it.type}</div>
+                  <div style={{ marginTop: 4 }}><Pill c={it.co === "green" ? "green" : "blue"}>{it.ref}</Pill></div>
+                  <div style={{ fontSize: 12, color: C.ink3, marginTop: 4 }}>{it.time}</div>
+                </div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 17, fontWeight: 700, fontFamily: "Outfit", color: it.co === "red" ? C.red : C.ink }}>{it.amount}</div>
+                <div style={{ fontSize: 12, color: C.ink3, marginTop: 2 }}>Balance: {it.bal}</div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </Shell>
+);
+
+const ProfileScreen = ({ setScreen }) => (
+  <Shell active="profile" setScreen={setScreen}>
+    <TopBar title="Swifty Profile" sub="Manage your account and preferences" setScreen={setScreen} />
+    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, maxWidth: 940 }}>
+      <Card style={{ padding: 28, gridColumn: "1 / -1" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ width: 72, height: 72, borderRadius: 18, background: `linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontFamily: "Outfit", fontWeight: 800, fontSize: 26, flexShrink: 0, boxShadow: `0 10px 24px -6px ${C.primary}66, inset 0 1px 0 rgba(255,255,255,0.25)` }}>CG</div>
+          <div>
+            <h3 style={{ fontFamily: "Outfit", fontSize: 24, fontWeight: 800, color: C.ink }}>Chad Gaddie</h3>
+            <p style={{ fontSize: 14, color: C.ink3, marginTop: 2 }}>Member since April 2026</p>
+          </div>
+        </div>
+      </Card>
+
+      <Card style={{ padding: 24 }}>
+        <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 16, color: C.ink }}>Personal Details</h4>
+        {[{ l: "Gender", v: "Male" }, { l: "Name", v: "Chad" }, { l: "Surname", v: "Gaddie" }, { l: "ID Number", v: "020718••••084" }].map((it, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "11px 0", borderBottom: i < 3 ? `1px solid ${C.line}` : "none" }}>
+            <span style={{ fontSize: 14, color: C.ink3 }}>{it.l}</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: C.ink }}>{it.v}</span>
+          </div>
+        ))}
+        <div style={{ padding: "12px 16px", background: C.blueBg, border: `1px solid ${C.primary}22`, borderRadius: 10, marginTop: 14, fontSize: 13, color: C.primaryDark, lineHeight: 1.5 }}>Need to edit? Contact an admin for assistance.</div>
+      </Card>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <Card style={{ padding: 24 }}>
+          <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 10, color: C.ink }}>Booking Management</h4>
+          <div style={{ padding: "14px 18px", background: 'rgba(47,107,224,0.06)', border: `1px solid ${C.line}`, borderRadius: 10, fontSize: 14, color: C.ink3 }}>No active booking</div>
+        </Card>
+        <Card style={{ padding: 24 }}>
+          <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 10, color: C.ink }}>Payment Method</h4>
+          <p style={{ fontSize: 14, color: C.ink3, marginBottom: 14 }}>No card saved</p>
+          <Btn v="outline" full>Add Card</Btn>
+        </Card>
+        <Card style={{ padding: 24 }}>
+          <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 12, color: C.ink }}>Settings</h4>
+          {["Account Security", "Log Out"].map((it, i) => (
+            <button key={i} onClick={i === 1 ? () => setScreen("login") : undefined} style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 16px",
+              borderRadius: 10, border: `1px solid ${C.line}`, background: 'rgba(255,255,255,0.5)', cursor: "pointer",
+              fontSize: 14, fontWeight: 500, fontFamily: "DM Sans", width: "100%", marginBottom: 6,
+              color: i === 1 ? C.red : C.ink
+            }}>{it} <I.Arrow /></button>
+          ))}
+        </Card>
+      </div>
+    </div>
+  </Shell>
+);
+
+// Tweaks
+const TWEAKS = /*EDITMODE-BEGIN*/{
+  "accentHue": 218,
+  "density": "comfortable",
+  "glassStrength": "medium"
+}/*EDITMODE-END*/;
+
+const App = () => {
+  const [screen, setScreen] = useState(() => localStorage.getItem('ss_screen') || "login");
+  const [tweaksOpen, setTweaksOpen] = useState(false);
+
+  React.useEffect(() => { localStorage.setItem('ss_screen', screen); }, [screen]);
+
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setTweaksOpen(true);
+      if (e.data?.type === '__deactivate_edit_mode') setTweaksOpen(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const screens = {
+    login: <LoginScreen setScreen={setScreen} />,
+    home: <HomeScreen setScreen={setScreen} />,
+    search: <SearchScreen setScreen={setScreen} />,
+    building: <BuildingScreen setScreen={setScreen} />,
+    units: <UnitsScreen setScreen={setScreen} />,
+    details: <DetailsScreen setScreen={setScreen} />,
+    confirm: <ConfirmScreen setScreen={setScreen} />,
+    payment: <PaymentScreen setScreen={setScreen} />,
+    statement: <StatementScreen setScreen={setScreen} />,
+    profile: <ProfileScreen setScreen={setScreen} />,
+  };
+
+  return (
+    <div data-screen-label={`${screen}`}>
+      {screens[screen] || screens.home}
+      {tweaksOpen && (
+        <div style={{
+          position: 'fixed', bottom: 20, right: 20, width: 260, padding: 16,
+          borderRadius: 14, zIndex: 500, ...glass, color: C.ink
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <b style={{ fontFamily: 'Outfit', fontSize: 15 }}>Tweaks</b>
+            <button onClick={() => setTweaksOpen(false)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: C.ink3 }}>×</button>
+          </div>
+          <div style={{ fontSize: 11, color: C.ink3, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Jump to screen</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {Object.keys(screens).map(s => (
+              <button key={s} onClick={() => setScreen(s)} style={{
+                padding: '5px 10px', borderRadius: 7, fontSize: 11,
+                background: screen === s ? C.primary : 'rgba(255,255,255,0.6)',
+                color: screen === s ? '#fff' : C.ink2,
+                border: `1px solid ${screen === s ? C.primary : C.line2}`,
+                cursor: 'pointer', fontFamily: 'DM Sans', fontWeight: 500
+              }}>{s}</button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
