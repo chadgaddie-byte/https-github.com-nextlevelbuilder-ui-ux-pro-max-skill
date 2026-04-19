@@ -48,6 +48,14 @@
     .two-col { grid-template-columns: 1fr !important; }
     .login-root { flex-direction: column !important; }
     .login-right { width: 100% !important; }
+    .landing-hero-inner { flex-direction: column !important; text-align: center; }
+    .landing-hero-ctas { justify-content: center !important; }
+    .landing-feat-grid { grid-template-columns: 1fr !important; }
+    .landing-steps { grid-template-columns: 1fr !important; }
+    .landing-step-connector { display: none !important; }
+    .landing-prop-grid { flex-direction: column !important; }
+    .landing-testimonials { grid-template-columns: 1fr !important; }
+    .landing-nav-links { display: none !important; }
   }
 </style>
 </head>
@@ -241,6 +249,258 @@ const TopBar = ({ title, sub, onBack, setScreen }) => (
 );
 
 // ─── Screens ───
+
+const LandingScreen = ({ setScreen }) => {
+  const feat = [
+    { icon: <I.Zap />, title: "Instant Booking", body: "Pick a move-in date and secure your apartment the same day — no waiting, no paperwork queues." },
+    { icon: <I.Shield />, title: "No Lease Required", body: "Month-to-month stays with full flexibility. Stay as long as you need, leave when you're ready." },
+    { icon: <I.Lock />, title: "Secure & Verified", body: "Every tenant is ID-verified. Every building is 24/7 secured. Your safety is our baseline." },
+    { icon: <I.Wifi />, title: "Fully Furnished", body: "WiFi, water, parking, and a modern kitchen — all included in your monthly rate." },
+    { icon: <I.Bed />, title: "1–3 BR Options", body: "Solo or shared living, we have sizes to fit your budget and your team." },
+    { icon: <I.Car />, title: "Same-Day Move In", body: "Complete your booking online, collect your keys, and be home before sunset." },
+  ];
+  const steps = [
+    { n: "01", t: "Pick a date", d: "Choose when you want to move in — even today. We'll show you what's available." },
+    { n: "02", t: "Choose your space", d: "Browse 1, 2, and 3-bedroom apartments at York House, Johannesburg." },
+    { n: "03", t: "Pay & move in", d: "Secure online payment, instant confirmation, same-day key collection." },
+  ];
+  const testimonials = [
+    { q: "I booked on a Wednesday and moved in that Friday. No agent fees, no lease — it was actually that easy.", name: "Amara S.", role: "Designer, JHB" },
+    { q: "Perfect for when I relocated for work. The process was completely online and I had my keys within 24 hours.", name: "Thabo M.", role: "Engineer, relocated from CPT" },
+    { q: "Honestly the cleanest rental experience I've ever had. The building is great and the app is super simple.", name: "Priya K.", role: "Freelancer, JHB" },
+  ];
+  return (
+    <div style={{ minHeight: "100vh", position: 'relative', zIndex: 1, overflowX: 'hidden' }}>
+
+      {/* ── NAV ── */}
+      <nav style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 48px', height: 68,
+        background: 'rgba(238,244,251,0.8)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${C.line}`,
+      }}>
+        <Logo />
+        <div className="landing-nav-links" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          {['Features', 'How it works', 'Our building', 'Pricing'].map(l => (
+            <span key={l} style={{ fontSize: 14, fontWeight: 500, color: C.ink2, cursor: 'pointer' }}>{l}</span>
+          ))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button onClick={() => setScreen("login")} style={{ padding: '10px 22px', borderRadius: 10, border: `1.5px solid ${C.line2}`, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans', color: C.ink }}>Log In</button>
+          <Btn onClick={() => setScreen("signup")}>Get Started</Btn>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <div style={{
+        background: `linear-gradient(160deg, #0A1628 0%, #1E3A6B 50%, #2F6BE0 100%)`,
+        padding: '90px 48px 100px', position: 'relative', overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(111,164,232,0.3), transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-15%', right: '-5%', width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(143,200,232,0.22), transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <div className="landing-hero-inner" style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 64, position: 'relative', zIndex: 1 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 99, background: 'rgba(111,164,232,0.2)', border: '1px solid rgba(111,164,232,0.35)', marginBottom: 28 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: C.primarySoft, boxShadow: `0 0 8px ${C.primarySoft}` }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: C.primarySoft, letterSpacing: 0.5 }}>Now available in Johannesburg</span>
+            </div>
+            <h1 style={{ fontFamily: 'Outfit', fontSize: 'clamp(38px, 5vw, 68px)', fontWeight: 800, color: '#fff', lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: 24 }}>
+              Rent a space.<br />
+              <span style={{ color: C.primarySoft }}>Move in today.</span>
+            </h1>
+            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: 36, maxWidth: 520 }}>
+              Swift Stay makes renting as simple as booking a hotel room. No lease, no agent fees, no waiting. Pick a date — we'll handle the rest.
+            </p>
+            <div className="landing-hero-ctas" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+              <Btn onClick={() => setScreen("signup")}>Get Started Free <I.Arrow /></Btn>
+              <button onClick={() => setScreen("login")} style={{ padding: '13px 24px', borderRadius: 12, border: '1.5px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)', color: '#fff', fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans' }}>Log In</button>
+            </div>
+            <div style={{ display: 'flex', gap: 36, marginTop: 48, paddingTop: 36, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              {[{ n: "100+", l: "Happy tenants" }, { n: "Same day", l: "Move-in available" }, { n: "No", l: "Lease required" }, { n: "24/7", l: "Building security" }].map((s, i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'Outfit', fontSize: 22, fontWeight: 700, color: C.primarySoft }}>{s.n}</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Mini app preview card */}
+          <div style={{ flexShrink: 0, width: 340 }}>
+            <div style={{ ...glass, padding: 24, borderRadius: 20 }}>
+              <div style={{ fontFamily: 'Outfit', fontSize: 13, fontWeight: 700, color: C.ink3, marginBottom: 16, letterSpacing: 0.5, textTransform: 'uppercase' }}>Available now</div>
+              {[
+                { name: "Apt 0127", type: "1BR Regular", price: "R 3,200", tag: "Available" },
+                { name: "Apt 0123", type: "2BR Regular", price: "R 4,500", tag: "Available" },
+                { name: "Apt 0109", type: "3BR Small", price: "R 6,000", tag: "Available" },
+              ].map((u, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: i < 2 ? `1px solid ${C.line}` : 'none' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: C.primaryBg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.primary, flexShrink: 0, border: `1px solid ${C.line2}` }}><I.Home s={16} /></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: C.ink }}>{u.name}</div>
+                    <div style={{ fontSize: 12, color: C.ink3 }}>{u.type}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontFamily: 'Outfit', fontSize: 16, fontWeight: 700, color: C.primary }}>{u.price}</div>
+                    <Pill c="green" style={{ fontSize: 10 }}>{u.tag}</Pill>
+                  </div>
+                </div>
+              ))}
+              <Btn onClick={() => setScreen("signup")} full style={{ marginTop: 16 }}>Browse All Spaces <I.Arrow /></Btn>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FEATURES ── */}
+      <div style={{ padding: '80px 48px', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <div style={{ display: 'inline-block', padding: '5px 16px', borderRadius: 99, background: C.primaryBg, color: C.primary, fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 16, border: `1px solid ${C.line2}` }}>Why Swift Stay</div>
+          <h2 style={{ fontFamily: 'Outfit', fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 800, color: C.ink, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            Renting, reimagined
+          </h2>
+          <p style={{ fontSize: 16, color: C.ink3, marginTop: 14, maxWidth: 520, margin: '14px auto 0' }}>Everything a traditional lease doesn't give you — speed, flexibility, and zero hassle.</p>
+        </div>
+        <div className="landing-feat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          {feat.map((f, i) => (
+            <Card key={i} style={{ padding: 28 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: C.primaryBg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.primary, marginBottom: 16, border: `1px solid ${C.line2}` }}>{f.icon}</div>
+              <div style={{ fontFamily: 'Outfit', fontSize: 17, fontWeight: 700, color: C.ink, marginBottom: 8 }}>{f.title}</div>
+              <div style={{ fontSize: 14, color: C.ink3, lineHeight: 1.65 }}>{f.body}</div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* ── HOW IT WORKS ── */}
+      <div style={{ background: `linear-gradient(180deg, ${C.primaryBg} 0%, rgba(235,242,255,0.4) 100%)`, padding: '80px 48px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <div style={{ display: 'inline-block', padding: '5px 16px', borderRadius: 99, background: '#fff', color: C.primary, fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 16, border: `1px solid ${C.line2}` }}>Simple process</div>
+            <h2 style={{ fontFamily: 'Outfit', fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 800, color: C.ink, letterSpacing: '-0.02em', lineHeight: 1.1 }}>Move in, in 3 steps</h2>
+          </div>
+          <div className="landing-steps" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr auto 1fr', gap: 0, alignItems: 'center' }}>
+            {steps.map((s, i) => (
+              <React.Fragment key={i}>
+                <Card style={{ padding: 32, textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'Outfit', fontSize: 36, fontWeight: 800, color: C.primarySoft, opacity: 0.6, marginBottom: 8, letterSpacing: '-0.02em' }}>{s.n}</div>
+                  <div style={{ fontFamily: 'Outfit', fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 10 }}>{s.t}</div>
+                  <div style={{ fontSize: 14, color: C.ink3, lineHeight: 1.65 }}>{s.d}</div>
+                </Card>
+                {i < 2 && (
+                  <div className="landing-step-connector" style={{ display: 'flex', justifyContent: 'center', padding: '0 12px' }}>
+                    <I.Arrow />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 44 }}>
+            <Btn onClick={() => setScreen("signup")}>Start Your Booking <I.Arrow /></Btn>
+          </div>
+        </div>
+      </div>
+
+      {/* ── PROPERTY ── */}
+      <div style={{ padding: '80px 48px', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <div style={{ display: 'inline-block', padding: '5px 16px', borderRadius: 99, background: C.primaryBg, color: C.primary, fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 16, border: `1px solid ${C.line2}` }}>Our building</div>
+          <h2 style={{ fontFamily: 'Outfit', fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 800, color: C.ink, letterSpacing: '-0.02em' }}>York House, Johannesburg</h2>
+          <p style={{ fontSize: 16, color: C.ink3, marginTop: 14, maxWidth: 540, margin: '14px auto 0' }}>Our flagship property — fully furnished apartments with everything included, in the heart of Gauteng.</p>
+        </div>
+        <Card style={{ padding: 0, overflow: 'hidden', cursor: 'pointer' }} onClick={() => setScreen("signup")}>
+          <div className="landing-prop-grid" style={{ display: 'flex', minHeight: 280 }}>
+            <div style={{ flex: '0 0 auto', width: '40%', minWidth: 220, background: `linear-gradient(135deg, ${C.ink} 0%, ${C.primaryDark} 60%, ${C.primary} 100%)`, display: 'flex', alignItems: 'flex-end', padding: 36, position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(45deg, transparent, transparent 14px, rgba(255,255,255,0.03) 14px, rgba(255,255,255,0.03) 15px)' }} />
+              <div style={{ position: 'absolute', top: 20, left: 20 }}><Pill c="green">33 Spaces Available</Pill></div>
+              <div style={{ color: '#fff', position: 'relative' }}>
+                <h3 style={{ fontFamily: 'Outfit', fontSize: 32, fontWeight: 800, letterSpacing: '-0.01em' }}>York House</h3>
+                <p style={{ fontSize: 14, opacity: 0.75, marginTop: 4 }}>Johannesburg, Gauteng</p>
+              </div>
+            </div>
+            <div style={{ flex: 1, padding: 36, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
+                  {[{ icon: <I.Bed />, l: "1–3 BR options" }, { icon: <I.Wifi />, l: "WiFi included" }, { icon: <I.Car />, l: "Parking" }, { icon: <I.Shield />, l: "24/7 Security" }, { icon: <I.Drop />, l: "Water included" }].map((a, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, background: C.primaryBg, border: `1px solid ${C.line2}`, fontSize: 13, color: C.ink2 }}>{a.icon} {a.l}</div>
+                  ))}
+                </div>
+                <p style={{ fontSize: 15, color: C.ink2, lineHeight: 1.7, maxWidth: 500 }}>
+                  A modern, fully-managed rental building designed for flexible living. Whether you're relocating, between leases, or looking for a fresh start — York House has a space for you.
+                </p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 24, paddingTop: 20, borderTop: `1px solid ${C.line}` }}>
+                <div>
+                  <div style={{ fontSize: 13, color: C.ink3 }}>Apartments from</div>
+                  <div style={{ fontFamily: 'Outfit', fontSize: 34, fontWeight: 800, color: C.primary }}>R 3,200 <span style={{ fontSize: 15, color: C.ink3, fontWeight: 400 }}>/mo</span></div>
+                </div>
+                <Btn onClick={() => setScreen("signup")}>View Apartments <I.Arrow /></Btn>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* ── TESTIMONIALS ── */}
+      <div style={{ background: `linear-gradient(180deg, rgba(235,242,255,0.5) 0%, transparent 100%)`, padding: '80px 48px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <h2 style={{ fontFamily: 'Outfit', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 800, color: C.ink, letterSpacing: '-0.02em' }}>What our tenants say</h2>
+          </div>
+          <div className="landing-testimonials" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {testimonials.map((t, i) => (
+              <Card key={i} style={{ padding: 28 }}>
+                <div style={{ fontSize: 28, color: C.primarySoft, marginBottom: 12, lineHeight: 1 }}>"</div>
+                <p style={{ fontSize: 14, color: C.ink2, lineHeight: 1.75, marginBottom: 20 }}>{t.q}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 16, borderTop: `1px solid ${C.line}` }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: 'Outfit', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{t.name[0]}</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.ink }}>{t.name}</div>
+                    <div style={{ fontSize: 12, color: C.ink3 }}>{t.role}</div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CTA BANNER ── */}
+      <div style={{ padding: '0 48px 80px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{
+            background: `linear-gradient(135deg, ${C.primaryDark} 0%, ${C.primary} 55%, ${C.primarySoft} 100%)`,
+            borderRadius: 24, padding: '56px 52px', color: '#fff', position: 'relative', overflow: 'hidden',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 32, flexWrap: 'wrap'
+          }}>
+            <div style={{ position: 'absolute', top: -60, right: -40, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', filter: 'blur(30px)' }} />
+            <div style={{ position: 'relative' }}>
+              <h2 style={{ fontFamily: 'Outfit', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 10 }}>Ready to find your place?</h2>
+              <p style={{ fontSize: 16, opacity: 0.85, maxWidth: 460, lineHeight: 1.6 }}>Join over 100 tenants who've already found their space through Swift Stay. Sign up in minutes.</p>
+            </div>
+            <div style={{ display: 'flex', gap: 14, flexShrink: 0, position: 'relative' }}>
+              <button onClick={() => setScreen("signup")} style={{ padding: '14px 32px', borderRadius: 12, background: 'rgba(255,255,255,0.95)', color: C.primary, border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer', fontFamily: 'DM Sans', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 8px 24px -8px rgba(0,0,0,0.3)' }}>Get Started <I.Arrow /></button>
+              <button onClick={() => setScreen("login")} style={{ padding: '14px 28px', borderRadius: 12, border: '1.5px solid rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: 600, fontSize: 15, cursor: 'pointer', fontFamily: 'DM Sans', backdropFilter: 'blur(10px)' }}>Log In</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <div style={{ borderTop: `1px solid ${C.line}`, padding: '28px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <Logo />
+        <p style={{ fontSize: 13, color: C.ink3 }}>© 2026 Swift Stay. All rights reserved.</p>
+        <div style={{ display: 'flex', gap: 24 }}>
+          {['Privacy', 'Terms', 'Contact'].map(l => (
+            <span key={l} style={{ fontSize: 13, color: C.ink3, cursor: 'pointer' }}>{l}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const LoginScreen = ({ setScreen }) => (
   <div className="login-root" style={{ minHeight: "100vh", display: "flex", position: 'relative', zIndex: 1 }}>
@@ -665,7 +925,7 @@ const TWEAKS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 const App = () => {
-  const [screen, setScreen] = useState(() => localStorage.getItem('ss_screen') || "login");
+  const [screen, setScreen] = useState(() => localStorage.getItem('ss_screen') || "landing");
   const [tweaksOpen, setTweaksOpen] = useState(false);
 
   React.useEffect(() => { localStorage.setItem('ss_screen', screen); }, [screen]);
@@ -681,6 +941,7 @@ const App = () => {
   }, []);
 
   const screens = {
+    landing: <LandingScreen setScreen={setScreen} />,
     login: <LoginScreen setScreen={setScreen} />,
     home: <HomeScreen setScreen={setScreen} />,
     search: <SearchScreen setScreen={setScreen} />,
