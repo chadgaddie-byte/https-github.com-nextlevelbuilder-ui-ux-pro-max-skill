@@ -8,6 +8,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+@keyframes floatOrb{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-25px,20px) scale(0.95)}}
+@keyframes floatOrb2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-35px,25px) scale(1.06)}66%{transform:translate(30px,-20px) scale(0.97)}}
+@keyframes floatOrb3{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-40px)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.92)}}
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes gridPan{0%{background-position:0 0}100%{background-position:60px 60px}}
+@keyframes cardFloat{0%,100%{transform:translateY(0px) rotate(-1deg)}50%{transform:translateY(-12px) rotate(-1deg)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 40px rgba(47,107,224,0.35), 0 20px 60px rgba(47,107,224,0.2)}50%{box-shadow:0 0 80px rgba(111,164,232,0.5), 0 20px 80px rgba(47,107,224,0.35)}}
+@keyframes borderSpin{0%{border-image:conic-gradient(from 0deg,#2F6BE0,#6FA4E8,#2F6BE0) 1}100%{border-image:conic-gradient(from 360deg,#2F6BE0,#6FA4E8,#2F6BE0) 1}}
+@keyframes scanLine{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.land-reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s cubic-bezier(.22,1,.36,1),transform 0.7s cubic-bezier(.22,1,.36,1)}
+.land-reveal.visible{opacity:1;transform:translateY(0)}
+.land-card-tilt{transition:transform 0.15s ease,box-shadow 0.15s ease}
+.land-feat-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 24px 48px -12px rgba(47,107,224,0.22)!important}
+.land-feat-card{transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s ease}
+.land-step-dot{transition:transform 0.3s ease,box-shadow 0.3s ease}
+.land-step-dot:hover{transform:scale(1.12);box-shadow:0 0 0 8px rgba(47,107,224,0.15)!important}
+.land-nav-pill{position:absolute;bottom:0;left:var(--x,0);width:var(--w,0);height:2px;background:#2F6BE0;border-radius:2px;transition:left 0.3s cubic-bezier(.22,1,.36,1),width 0.3s cubic-bezier(.22,1,.36,1)}
+</style>
+<style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
   body {
@@ -65,7 +90,7 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel">
-const { useState } = React;
+const { useState, useEffect, useRef, useCallback } = React;
 
 // Blue palette
 const C = {
@@ -214,7 +239,7 @@ const Sidebar = ({ active, setScreen }) => (
       ))}
     </nav>
     <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <button onClick={() => setScreen("login")} style={{
+      <button onClick={() => setScreen("landing")} style={{
         display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 10,
         border: "none", cursor: "pointer", fontFamily: "DM Sans", fontSize: 14, width: "100%",
         background: "transparent", color: "rgba(255,255,255,0.65)", textAlign: "left"
@@ -250,14 +275,86 @@ const TopBar = ({ title, sub, onBack, setScreen }) => (
 
 // ─── Screens ───
 
+// Scroll-reveal hook
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.land-reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+}
+
+// Animated counter hook
+function useCounter(target, duration = 1800, trigger = true) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!trigger) return;
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      setVal(Math.floor(p * p * target));
+      if (p < 1) requestAnimationFrame(step);
+      else setVal(target);
+    };
+    requestAnimationFrame(step);
+  }, [trigger, target, duration]);
+  return val;
+}
+
 const LandingScreen = ({ setScreen }) => {
+  const cardRef = useRef(null);
+  const heroRef = useRef(null);
+  const [cardStyle, setCardStyle] = useState({});
+  const [navScrolled, setNavScrolled] = useState(false);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const tenants = useCounter(127, 1600, statsVisible);
+  const units = useCounter(33, 1400, statsVisible);
+
+  useReveal();
+
+  useEffect(() => {
+    const onScroll = () => setNavScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onMove = (e) => setMousePos({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStatsVisible(true); }, { threshold: 0.5 });
+    if (statsRef.current) io.observe(statsRef.current);
+    return () => io.disconnect();
+  }, []);
+
+  const handleCardMove = useCallback((e) => {
+    if (!cardRef.current) return;
+    const r = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    setCardStyle({ transform: `perspective(700px) rotateY(${x * 14}deg) rotateX(${-y * 10}deg) scale(1.025)`, transition: 'transform 0.08s ease' });
+  }, []);
+  const handleCardLeave = useCallback(() => {
+    setCardStyle({ transform: 'perspective(700px) rotateY(-3deg) rotateX(2deg)', transition: 'transform 0.5s cubic-bezier(.22,1,.36,1)' });
+  }, []);
+
   const feat = [
-    { icon: <I.Zap />, title: "Instant Booking", body: "Pick a move-in date and secure your apartment the same day — no waiting, no paperwork queues." },
-    { icon: <I.Shield />, title: "No Lease Required", body: "Month-to-month stays with full flexibility. Stay as long as you need, leave when you're ready." },
-    { icon: <I.Lock />, title: "Secure & Verified", body: "Every tenant is ID-verified. Every building is 24/7 secured. Your safety is our baseline." },
-    { icon: <I.Wifi />, title: "Fully Furnished", body: "WiFi, water, parking, and a modern kitchen — all included in your monthly rate." },
-    { icon: <I.Bed />, title: "1–3 BR Options", body: "Solo or shared living, we have sizes to fit your budget and your team." },
-    { icon: <I.Car />, title: "Same-Day Move In", body: "Complete your booking online, collect your keys, and be home before sunset." },
+    { icon: <I.Zap />, title: "Instant Booking", body: "Pick a move-in date and secure your apartment the same day — no waiting, no paperwork queues.", grad: 'linear-gradient(135deg,#3B82F6,#2F6BE0)' },
+    { icon: <I.Shield />, title: "No Lease Required", body: "Month-to-month stays with full flexibility. Stay as long as you need, leave when you're ready.", grad: 'linear-gradient(135deg,#6366F1,#4F46E5)' },
+    { icon: <I.Lock />, title: "Secure & Verified", body: "Every tenant is ID-verified. Every building is 24/7 secured. Your safety is our baseline.", grad: 'linear-gradient(135deg,#0EA5E9,#0284C7)' },
+    { icon: <I.Wifi />, title: "Fully Furnished", body: "WiFi, water, parking, and a modern kitchen — all included in your monthly rate.", grad: 'linear-gradient(135deg,#8B5CF6,#7C3AED)' },
+    { icon: <I.Bed />, title: "1–3 BR Options", body: "Solo or shared living, we have sizes to fit your budget and your team.", grad: 'linear-gradient(135deg,#2563EB,#1D4ED8)' },
+    { icon: <I.Car />, title: "Same-Day Move In", body: "Complete your booking online, collect your keys, and be home before sunset.", grad: 'linear-gradient(135deg,#0891B2,#0E7490)' },
   ];
   const steps = [
     { n: "01", t: "Pick a date", d: "Choose when you want to move in — even today. We'll show you what's available." },
@@ -540,13 +637,135 @@ const LoginScreen = ({ setScreen }) => (
         <Btn onClick={() => setScreen("home")} full>Log In</Btn>
         <p style={{ textAlign: "center", marginTop: 16, fontSize: 14, color: C.primary, cursor: "pointer", fontWeight: 500 }}>Forgot your password?</p>
         <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 24, paddingTop: 24, textAlign: "center" }}>
-          <p style={{ fontSize: 14, color: C.ink3 }}>Don't have an account? <span style={{ color: C.primary, fontWeight: 600, cursor: "pointer" }}>Create one</span></p>
+          <p style={{ fontSize: 14, color: C.ink3 }}>Don't have an account? <span onClick={() => setScreen("signup")} style={{ color: C.primary, fontWeight: 600, cursor: "pointer" }}>Create one</span></p>
         </div>
         <div style={{ textAlign: "center", marginTop: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, color: C.ink3, fontSize: 12 }}><I.Lock /> Secured & encrypted</div>
       </div>
     </div>
   </div>
 );
+
+const SignupScreen = ({ setScreen }) => (
+  <div className="login-root" style={{ minHeight: "100vh", display: "flex", position: 'relative', zIndex: 1 }}>
+    <div style={{
+      flex: 1,
+      background: `linear-gradient(160deg, #0F1B2D 0%, #1E3A6B 55%, #2F6BE0 100%)`,
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 40,
+      position: "relative", overflow: "hidden"
+    }}>
+      <div style={{ position: "absolute", top: "8%", left: "8%", width: 340, height: 340, borderRadius: "50%", background: "radial-gradient(circle, rgba(111,164,232,0.35), transparent 70%)", filter: 'blur(20px)' }} />
+      <div style={{ position: "absolute", bottom: "12%", right: "5%", width: 260, height: 260, borderRadius: "50%", background: "radial-gradient(circle, rgba(143,200,232,0.25), transparent 70%)", filter: 'blur(20px)' }} />
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 440, color: "#fff" }}>
+        <Logo white />
+        <h2 style={{ fontFamily: "Outfit", fontSize: 42, fontWeight: 800, marginTop: 40, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+          Your new apartment is <span style={{ color: C.primarySoft }}>waiting for you</span>
+        </h2>
+        <p style={{ fontSize: 16, color: "rgba(255,255,255,0.68)", marginTop: 18, lineHeight: 1.7 }}>
+          Join over 100 tenants who found their space through Swift Stay. Takes less than 2 minutes to get started.
+        </p>
+        <div style={{ display: "flex", gap: 24, marginTop: 32 }}>
+          {[{ n: "Free", l: "To sign up" }, { n: "2 min", l: "Setup time" }, { n: "Same day", l: "Move-in available" }].map((s, i) => (
+            <div key={i}><div style={{ fontFamily: "Outfit", fontSize: 22, fontWeight: 700, color: C.primarySoft }}>{s.n}</div><div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 2 }}>{s.l}</div></div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <div className="login-right" style={{ width: 520, display: "flex", alignItems: "center", justifyContent: "center", padding: 48, background: 'rgba(245,249,255,0.7)', backdropFilter: 'blur(30px)' }}>
+      <div style={{ width: "100%", maxWidth: 380 }}>
+        <h2 style={{ fontFamily: "Outfit", fontSize: 30, fontWeight: 800, marginBottom: 8, color: C.ink }}>Create your account</h2>
+        <p style={{ color: C.ink3, fontSize: 15, marginBottom: 32 }}>It's free. No card required to sign up.</p>
+        {[
+          { l: "Full Name", p: "Chad Gaddie", t: "text" },
+          { l: "Email Address", p: "you@email.com", t: "email" },
+          { l: "Phone Number", p: "+27 71 000 0000", t: "tel" },
+          { l: "Password", p: "Create a password", t: "password" },
+        ].map((f, i) => (
+          <div key={i} style={{ marginBottom: 18 }}>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6, color: C.ink2 }}>{f.l}</label>
+            <input type={f.t} placeholder={f.p} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.line2}`, fontSize: 15, fontFamily: "DM Sans", outline: "none", background: 'rgba(255,255,255,0.8)' }} />
+          </div>
+        ))}
+        <Btn onClick={() => setScreen("verify")} full>Create Account <I.Arrow /></Btn>
+        <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 24, paddingTop: 24, textAlign: "center" }}>
+          <p style={{ fontSize: 14, color: C.ink3 }}>Already have an account? <span onClick={() => setScreen("login")} style={{ color: C.primary, fontWeight: 600, cursor: "pointer" }}>Log in</span></p>
+        </div>
+        <div style={{ textAlign: "center", marginTop: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, color: C.ink3, fontSize: 12 }}><I.Lock /> Secured & encrypted</div>
+      </div>
+    </div>
+  </div>
+);
+
+const VerifyScreen = ({ setScreen }) => {
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const inputs = useRef([]);
+  const handleChange = (val, idx) => {
+    const v = val.replace(/\D/, '').slice(-1);
+    const next = [...otp]; next[idx] = v; setOtp(next);
+    if (v && idx < 5) inputs.current[idx + 1]?.focus();
+  };
+  const handleKey = (e, idx) => {
+    if (e.key === 'Backspace' && !otp[idx] && idx > 0) inputs.current[idx - 1]?.focus();
+  };
+  const filled = otp.every(d => d !== '');
+  return (
+    <div className="login-root" style={{ minHeight: "100vh", display: "flex", position: 'relative', zIndex: 1 }}>
+      <div style={{
+        flex: 1,
+        background: `linear-gradient(160deg, #0F1B2D 0%, #1E3A6B 55%, #2F6BE0 100%)`,
+        display: "flex", alignItems: "center", justifyContent: "center", padding: 40,
+        position: "relative", overflow: "hidden"
+      }}>
+        <div style={{ position: "absolute", top: "8%", left: "8%", width: 340, height: 340, borderRadius: "50%", background: "radial-gradient(circle, rgba(111,164,232,0.35), transparent 70%)", filter: 'blur(20px)' }} />
+        <div style={{ position: "absolute", bottom: "12%", right: "5%", width: 260, height: 260, borderRadius: "50%", background: "radial-gradient(circle, rgba(143,200,232,0.25), transparent 70%)", filter: 'blur(20px)' }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 440, color: "#fff" }}>
+          <Logo white />
+          <h2 style={{ fontFamily: "Outfit", fontSize: 42, fontWeight: 800, marginTop: 40, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            One last step to <span style={{ color: C.primarySoft }}>get you in</span>
+          </h2>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.68)", marginTop: 18, lineHeight: 1.7 }}>
+            We sent a 6-digit code to your email. Enter it to verify your account and start browsing spaces.
+          </p>
+        </div>
+      </div>
+      <div className="login-right" style={{ width: 520, display: "flex", alignItems: "center", justifyContent: "center", padding: 48, background: 'rgba(245,249,255,0.7)', backdropFilter: 'blur(30px)' }}>
+        <div style={{ width: "100%", maxWidth: 380 }}>
+          <h2 style={{ fontFamily: "Outfit", fontSize: 30, fontWeight: 800, marginBottom: 8, color: C.ink }}>Verify your email</h2>
+          <p style={{ color: C.ink3, fontSize: 15, marginBottom: 36 }}>Enter the 6-digit code sent to <strong style={{ color: C.ink }}>you@email.com</strong></p>
+          <div style={{ display: "flex", gap: 10, marginBottom: 32, justifyContent: "center" }}>
+            {otp.map((d, i) => (
+              <input
+                key={i}
+                ref={el => inputs.current[i] = el}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={d}
+                onChange={e => handleChange(e.target.value, i)}
+                onKeyDown={e => handleKey(e, i)}
+                style={{
+                  width: 52, height: 60, textAlign: "center",
+                  fontSize: 26, fontFamily: "Outfit", fontWeight: 700,
+                  borderRadius: 12, border: `2px solid ${d ? C.primary : C.line2}`,
+                  background: d ? C.primaryBg : 'rgba(255,255,255,0.8)',
+                  color: C.ink, outline: "none",
+                  boxShadow: d ? `0 0 0 4px ${C.primary}18` : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+              />
+            ))}
+          </div>
+          <Btn onClick={() => setScreen("home")} full disabled={!filled}>Verify & Continue <I.Arrow /></Btn>
+          <p style={{ textAlign: "center", marginTop: 20, fontSize: 14, color: C.ink3 }}>
+            Didn't get the code? <span style={{ color: C.primary, fontWeight: 600, cursor: "pointer" }}>Resend</span>
+          </p>
+          <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 24, paddingTop: 20, textAlign: "center" }}>
+            <span onClick={() => setScreen("signup")} style={{ fontSize: 14, color: C.ink3, cursor: "pointer" }}>← Back to sign up</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Shell = ({ active, setScreen, children }) => (
   <div style={{ display: "flex", minHeight: "100vh", position: 'relative', zIndex: 1 }}>
@@ -904,7 +1123,7 @@ const ProfileScreen = ({ setScreen }) => (
         <Card style={{ padding: 24 }}>
           <h4 style={{ fontFamily: "Outfit", fontSize: 16, fontWeight: 700, marginBottom: 12, color: C.ink }}>Settings</h4>
           {["Account Security", "Log Out"].map((it, i) => (
-            <button key={i} onClick={i === 1 ? () => setScreen("login") : undefined} style={{
+            <button key={i} onClick={i === 1 ? () => setScreen("landing") : undefined} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 16px",
               borderRadius: 10, border: `1px solid ${C.line}`, background: 'rgba(255,255,255,0.5)', cursor: "pointer",
               fontSize: 14, fontWeight: 500, fontFamily: "DM Sans", width: "100%", marginBottom: 6,
@@ -943,6 +1162,8 @@ const App = () => {
   const screens = {
     landing: <LandingScreen setScreen={setScreen} />,
     login: <LoginScreen setScreen={setScreen} />,
+    signup: <SignupScreen setScreen={setScreen} />,
+    verify: <VerifyScreen setScreen={setScreen} />,
     home: <HomeScreen setScreen={setScreen} />,
     search: <SearchScreen setScreen={setScreen} />,
     building: <BuildingScreen setScreen={setScreen} />,
