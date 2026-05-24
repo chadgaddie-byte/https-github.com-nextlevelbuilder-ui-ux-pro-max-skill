@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planet Granite | Stone Surfaces. Perfected. | South Africa</title>
+  <meta name="description" content="South Africa's premier granite fabricator. CNC precision cutting, kitchen countertops, vanities, staircases & custom stone furniture. Free site quote."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+/* ═══════════════════════════════════════════════
+   RESET & TOKENS
+══════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:    #050403;
+  --ink2:   #0E0C0A;
+  --ink3:   #1A1714;
+  --gold:   #C8A356;
+  --gold2:  #E2BC72;
+  --gold3:  #8A6E34;
+  --cream:  #F4EFE6;
+  --cream2: #DDD5C8;
+  --dust:   #7A6E60;
+  --border: rgba(200,163,86,.14);
+  --ease:   cubic-bezier(.22,.61,.36,1);
+  --ease2:  cubic-bezier(.76,0,.24,1);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--ink);color:var(--cream);font-family:'Inter',sans-serif;overflow-x:hidden;cursor:none}
+::selection{background:var(--gold);color:var(--ink)}
+a{text-decoration:none;color:inherit}
+button{border:none;background:none;cursor:none;font:inherit}
+img{display:block;max-width:100%}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--gold3)}
+
+/* ═══════════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════════════ */
+#C{position:fixed;top:0;left:0;width:10px;height:10px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s,opacity .3s}
+#CF{position:fixed;top:0;left:0;width:44px;height:44px;border:1.5px solid rgba(200,163,86,.55);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .35s var(--ease),height .35s var(--ease),border-color .35s,background .35s}
+body.cur-hover #C{width:14px;height:14px;background:var(--gold2)}
+body.cur-hover #CF{width:64px;height:64px;border-color:var(--gold);background:rgba(200,163,86,.07)}
+body.cur-click #C{width:6px;height:6px}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS BAR
+══════════════════════════════════════════════════ */
+#prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold3),var(--gold2));width:0%;z-index:9997;transition:width .1s linear}
+
+/* ═══════════════════════════════════════════════
+   LOADER
+══════════════════════════════════════════════════ */
+#LD{position:fixed;inset:0;background:var(--ink);z-index:9996;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:clip-path 1s var(--ease2) .3s}
+#LD.out{clip-path:inset(0 0 100% 0)}
+.ld-logo{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.5em;color:var(--gold)}
+.ld-bar{width:180px;height:1px;background:var(--ink3);overflow:hidden;position:relative}
+.ld-bar-fill{position:absolute;top:0;left:-100%;height:100%;width:100%;background:var(--gold);animation:ldFill 1.8s var(--ease) forwards}
+@keyframes ldFill{to{left:0}}
+
+/* ═══════════════════════════════════════════════
+   STICKY WHATSAPP
+══════════════════════════════════════════════════ */
+#wa{position:fixed;bottom:32px;right:32px;z-index:900;display:flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:12px 20px 12px 14px;border-radius:100px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 8px 32px rgba(37,211,102,.4);transition:transform .3s var(--ease),box-shadow .3s}
+#wa:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 16px 48px rgba(37,211,102,.5)}
+#wa svg{width:22px;height:22px;flex-shrink:0}
+
+/* ═══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:24px 64px;display:flex;align-items:center;justify-content:space-between;transition:padding .4s var(--ease),background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.stuck{background:rgba(5,4,3,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:16px 64px;border-color:var(--border)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.4em;color:var(--cream)}
+.nav-logo em{color:var(--gold);font-style:normal}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{font-size:.78rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--dust);position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s var(--ease)}
+.nav-links a:hover{color:var(--cream)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-phone{font-size:.78rem;font-weight:500;color:var(--dust);letter-spacing:.05em;transition:color .3s}
+.nav-phone:hover{color:var(--gold)}
+.nav-btn{padding:10px 24px;background:var(--gold);color:var(--ink);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:background .3s,transform .2s}
+.nav-btn:hover{background:var(--gold2);transform:translateY(-1px)}
+.nav-ham{display:none;flex-direction:column;gap:5px;padding:6px}
+.nav-ham span{display:block;width:22px;height:1.5px;background:var(--cream);transition:.3s}
+
+/* ═══════════════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════════════════ */
+#mob{position:fixed;inset:0;background:var(--ink2);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;opacity:0;pointer-events:none;transition:opacity .4s}
+#mob.open{opacity:1;pointer-events:all}
+#mob a{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.25em;color:var(--cream);transition:color .3s}
+#mob a:hover{color:var(--gold)}
+.mob-close{position:absolute;top:28px;right:28px;font-size:1.4rem;color:var(--dust)}
+
+/* ═══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════ */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 120% 80% at 110% 50%,rgba(200,163,86,.09) 0%,transparent 55%),
+    radial-gradient(ellipse 80% 100% at -10% 60%,rgba(100,80,50,.12) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 100%,rgba(200,163,86,.06) 0%,transparent 50%),
+    linear-gradient(155deg,#1a1610 0%,#050403 40%,#0d0a07 100%)}
+#hcanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-veins{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.06}
+.hero-veins svg{width:100%;height:100%}
+.hero-l{position:relative;z-index:2;padding:160px 64px 80px;max-width:860px}
+.hero-tag{font-size:.72rem;font-weight:700;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:32px;opacity:0;animation:fup .7s .4s var(--ease) forwards}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,13vw,13rem);line-height:.92;letter-spacing:.02em;margin-bottom:36px}
+.hero-h1 .w{display:inline-block;overflow:hidden}
+.hero-h1 .wt{display:inline-block;transform:translateY(110%);opacity:0;animation:wipeUp .8s var(--ease2) forwards}
+.hero-h1 .wt:nth-child(1){animation-delay:.5s}
+.hero-h1 .wt:nth-child(2){animation-delay:.65s}
+.hero-h1 .wt:nth-child(3){animation-delay:.8s}
+.hero-h1 em{color:var(--gold);font-style:normal}
+.hero-p{font-size:1.05rem;font-weight:300;color:var(--dust);line-height:1.8;max-width:480px;margin-bottom:48px;opacity:0;animation:fup .7s 1s var(--ease) forwards}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fup .7s 1.15s var(--ease) forwards}
+.btn-prim{padding:17px 44px;background:var(--gold);color:var(--ink);font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:background .3s,transform .25s,box-shadow .3s;display:inline-block}
+.btn-prim:hover{background:var(--gold2);transform:translateY(-3px);box-shadow:0 24px 48px rgba(200,163,86,.25)}
+.btn-ghost{padding:17px 44px;border:1px solid rgba(244,239,230,.2);color:var(--cream2);font-size:.82rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:border-color .3s,background .3s,transform .25s;display:inline-block}
+.btn-ghost:hover{border-color:var(--gold);background:rgba(200,163,86,.06);transform:translateY(-3px)}
+.hero-trust{display:flex;gap:36px;margin-top:64px;opacity:0;animation:fup .7s 1.35s var(--ease) forwards}
+.trust-item{display:flex;flex-direction:column;gap:4px}
+.trust-num{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.05em;color:var(--cream);line-height:1}
+.trust-lbl{font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--dust)}
+.hero-r{position:absolute;right:0;top:0;bottom:0;width:40%;display:flex;align-items:center;justify-content:center;z-index:1;overflow:hidden}
+.hero-stone-art{width:100%;height:100%;position:relative}
+.hero-slab{position:absolute;border-radius:4px;overflow:hidden}
+.hs1{width:300px;height:420px;right:80px;top:50%;transform:translateY(-55%) rotate(3deg);animation:floatA 8s ease-in-out infinite}
+.hs2{width:200px;height:280px;right:40px;top:30%;transform:translateY(-20%) rotate(-5deg);animation:floatB 10s ease-in-out infinite}
+.hs3{width:160px;height:200px;right:260px;top:55%;animation:floatC 7s ease-in-out infinite}
+@keyframes floatA{0%,100%{transform:translateY(-55%) rotate(3deg)}50%{transform:translateY(-58%) rotate(3.5deg)}}
+@keyframes floatB{0%,100%{transform:translateY(-20%) rotate(-5deg)}50%{transform:translateY(-23%) rotate(-4.5deg)}}
+@keyframes floatC{0%,100%{transform:rotate(0deg)}50%{transform:rotate(.5deg) translateY(-4px)}}
+.hero-scroll{position:absolute;bottom:40px;left:64px;display:flex;align-items:center;gap:12px;opacity:0;animation:fup .7s 1.6s var(--ease) forwards}
+.hero-scroll span{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dust)}
+.scroll-track{width:1px;height:56px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollPulse 2.5s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(.85)}}
+
+/* ═══════════════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════════════════ */
+.mq{overflow:hidden;background:var(--gold);padding:14px 0}
+.mq-track{display:flex;width:max-content;animation:mqRoll 28s linear infinite}
+.mq-item{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.3em;color:var(--ink);padding:0 36px;display:flex;align-items:center;gap:36px;white-space:nowrap}
+.mq-item::after{content:'✦';font-size:.6rem}
+@keyframes mqRoll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ═══════════════════════════════════════════════
+   SERVICES
+══════════════════════════════════════════════════ */
+.svc{padding:140px 64px;background:var(--ink)}
+.svc-head{max-width:1300px;margin:0 auto 80px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap}
+.svc-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.svc-card{position:relative;padding:56px 48px 48px;background:var(--ink2);border:1px solid transparent;overflow:hidden;transition:border-color .4s,transform .35s var(--ease);cursor:none}
+.svc-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width .5s var(--ease)}
+.svc-card:hover{border-color:var(--border);transform:translateY(-6px)}
+.svc-card:hover::after{width:100%}
+.svc-num{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:rgba(200,163,86,.08);line-height:1;margin-bottom:20px;transition:color .4s}
+.svc-card:hover .svc-num{color:rgba(200,163,86,.15)}
+.svc-ico{width:44px;height:44px;color:var(--gold);margin-bottom:24px}
+.svc-ico svg{width:100%;height:100%}
+.svc-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;line-height:1.25;margin-bottom:14px}
+.svc-desc{font-size:.88rem;font-weight:300;color:var(--dust);line-height:1.8}
+.svc-link{display:inline-flex;align-items:center;gap:8px;margin-top:28px;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold3);transition:gap .3s,color .3s}
+.svc-card:hover .svc-link{gap:14px;color:var(--gold)}
+.svc-arrow svg{width:14px;height:14px}
+
+/* ═══════════════════════════════════════════════
+   STATS BAND
+══════════════════════════════════════════════════ */
+.stats{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-inner{max-width:1300px;margin:0 auto;padding:100px 64px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.stat{padding:0 40px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,7vw,7rem);letter-spacing:.02em;line-height:1;color:var(--cream)}
+.stat-suf{color:var(--gold);font-size:clamp(2.5rem,4.5vw,4.5rem)}
+.stat-lbl{font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--dust);margin-top:12px;display:block}
+
+/* ═══════════════════════════════════════════════
+   GALLERY / STONE ART
+══════════════════════════════════════════════════ */
+.gal{padding:0 0 0;background:var(--ink)}
+.gal-head{max-width:1300px;margin:0 auto;padding:140px 64px 60px}
+.gal-grid{display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:auto;gap:3px}
+.gc{position:relative;overflow:hidden;cursor:none}
+.gc1{grid-column:1/6;grid-row:1/3;aspect-ratio:1.1}
+.gc2{grid-column:6/9;grid-row:1/2;aspect-ratio:1.3}
+.gc3{grid-column:9/13;grid-row:1/2;aspect-ratio:1.3}
+.gc4{grid-column:6/10;grid-row:2/3;aspect-ratio:1.4}
+.gc5{grid-column:10/13;grid-row:2/3;aspect-ratio:1}
+.gc-bg{position:absolute;inset:0;transition:transform .7s var(--ease)}
+.gc:hover .gc-bg{transform:scale(1.06)}
+.gc-layer{position:absolute;inset:0;background:linear-gradient(to top,rgba(5,4,3,.95) 0%,rgba(5,4,3,.25) 45%,transparent 100%);opacity:0;transition:opacity .4s}
+.gc:hover .gc-layer{opacity:1}
+.gc-info{position:absolute;bottom:0;left:0;right:0;padding:28px;transform:translateY(10px);opacity:0;transition:opacity .4s,transform .4s var(--ease)}
+.gc:hover .gc-info{opacity:1;transform:translateY(0)}
+.gc-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;line-height:1.3}
+.gc-sub{font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:4px}
+
+/* CSS Granite Textures — elaborate */
+.g-blk{background:radial-gradient(circle at 12% 18%,rgba(240,210,120,.28) 0%,transparent 7%),radial-gradient(circle at 78% 12%,rgba(210,175,90,.24) 0%,transparent 6%),radial-gradient(circle at 45% 65%,rgba(230,195,105,.2) 0%,transparent 10%),radial-gradient(circle at 22% 82%,rgba(215,180,88,.26) 0%,transparent 7%),radial-gradient(circle at 88% 72%,rgba(200,165,80,.22) 0%,transparent 6%),radial-gradient(circle at 60% 38%,rgba(245,215,125,.16) 0%,transparent 9%),radial-gradient(circle at 35% 22%,rgba(220,188,96,.2) 0%,transparent 8%),radial-gradient(circle at 92% 30%,rgba(205,170,84,.18) 0%,transparent 5%),#0a0906}
+.g-wht{background:radial-gradient(ellipse 70% 40% at 30% 50%,rgba(140,130,120,.25) 0%,transparent 40%),radial-gradient(ellipse 50% 60% at 80% 30%,rgba(120,110,100,.2) 0%,transparent 35%),radial-gradient(ellipse 40% 30% at 60% 80%,rgba(160,148,135,.15) 0%,transparent 30%),linear-gradient(160deg,rgba(200,192,182,.08) 0%,transparent 50%),#ddd5c8}
+.g-brn{background:radial-gradient(circle at 25% 30%,rgba(230,215,185,.35) 0%,transparent 13%),radial-gradient(circle at 68% 22%,rgba(210,195,165,.3) 0%,transparent 11%),radial-gradient(circle at 48% 72%,rgba(220,205,175,.25) 0%,transparent 15%),radial-gradient(circle at 82% 65%,rgba(235,220,188,.32) 0%,transparent 10%),radial-gradient(circle at 14% 78%,rgba(215,198,168,.28) 0%,transparent 12%),#3a2820}
+.g-blu{background:radial-gradient(circle at 28% 35%,rgba(145,168,215,.32) 0%,transparent 16%),radial-gradient(circle at 72% 62%,rgba(125,148,195,.28) 0%,transparent 13%),radial-gradient(circle at 50% 15%,rgba(165,185,225,.22) 0%,transparent 11%),radial-gradient(circle at 15% 72%,rgba(135,158,205,.3) 0%,transparent 14%),radial-gradient(circle at 88% 25%,rgba(155,175,220,.25) 0%,transparent 10%),#1c2030}
+.g-grn{background:radial-gradient(circle at 20% 28%,rgba(175,165,95,.32) 0%,transparent 11%),radial-gradient(circle at 75% 18%,rgba(155,148,82,.28) 0%,transparent 9%),radial-gradient(circle at 52% 68%,rgba(165,155,88,.22) 0%,transparent 13%),radial-gradient(circle at 88% 62%,rgba(180,170,98,.3) 0%,transparent 10%),#111a0e}
+.g-slv{background:radial-gradient(ellipse 80% 50% at 40% 40%,rgba(185,185,185,.2) 0%,transparent 45%),radial-gradient(ellipse 60% 70% at 75% 65%,rgba(165,165,165,.15) 0%,transparent 40%),radial-gradient(circle at 20% 80%,rgba(200,200,200,.18) 0%,transparent 30%),linear-gradient(200deg,#2a2a2a,#1a1a1a)}
+
+/* ═══════════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════════════ */
+.tst{background:var(--ink2);padding:140px 64px;border-top:1px solid var(--border)}
+.tst-inner{max-width:1300px;margin:0 auto}
+.tst-head{margin-bottom:80px}
+.tst-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.tst-card{padding:48px;background:var(--ink3);border:1px solid var(--border);border-radius:4px;position:relative;transition:border-color .4s,transform .35s var(--ease)}
+.tst-card:hover{border-color:rgba(200,163,86,.35);transform:translateY(-4px)}
+.tst-qmark{font-family:'Cormorant Garamond',serif;font-size:6rem;font-style:italic;line-height:.8;color:rgba(200,163,86,.15);position:absolute;top:28px;right:32px}
+.tst-stars{display:flex;gap:4px;margin-bottom:24px}
+.tst-stars svg{width:14px;height:14px;fill:var(--gold);color:var(--gold)}
+.tst-q{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;line-height:1.8;color:var(--cream);margin-bottom:32px}
+.tst-author{display:flex;align-items:center;gap:14px}
+.tst-av{width:40px;height:40px;border-radius:50%;background:var(--gold3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.05em;color:var(--cream);flex-shrink:0}
+.tst-name{font-size:.85rem;font-weight:600}
+.tst-loc{font-size:.75rem;color:var(--dust);margin-top:2px}
+
+/* ═══════════════════════════════════════════════
+   HOW IT WORKS
+══════════════════════════════════════════════════ */
+.how{padding:140px 64px;background:var(--ink)}
+.how-inner{max-width:1100px;margin:0 auto}
+.how-head{margin-bottom:80px}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.how-grid::before{content:'';position:absolute;top:34px;left:12%;width:76%;height:1px;background:linear-gradient(to right,var(--gold),rgba(200,163,86,.15))}
+.how-step{padding:0 24px;text-align:center}
+.how-circ{width:68px;height:68px;border-radius:50%;background:var(--ink2);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.1em;color:var(--gold);position:relative;z-index:1;transition:background .4s,border-color .4s}
+.how-step:hover .how-circ{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.how-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;margin-bottom:12px}
+.how-desc{font-size:.83rem;font-weight:300;color:var(--dust);line-height:1.8}
+
+/* ═══════════════════════════════════════════════
+   MATERIALS
+══════════════════════════════════════════════════ */
+.mat{padding:100px 64px;background:var(--ink2);border-top:1px solid var(--border)}
+.mat-inner{max-width:1300px;margin:0 auto}
+.mat-lbl{font-size:.7rem;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:40px}
+.mat-row{display:flex;gap:14px;flex-wrap:wrap}
+.mat-pill{display:flex;align-items:center;gap:12px;padding:10px 20px 10px 10px;border:1px solid var(--border);border-radius:100px;transition:border-color .3s,background .3s}
+.mat-pill:hover{border-color:var(--gold);background:rgba(200,163,86,.05)}
+.mat-sw{width:32px;height:32px;border-radius:50%}
+.mat-n{font-size:.8rem;font-weight:500;color:var(--cream2)}
+.sw-A{background:radial-gradient(circle at 35% 35%,rgba(210,175,90,.6) 0%,transparent 50%),#0a0906}
+.sw-B{background:linear-gradient(135deg,#ccc8c0,#b0aa9e)}
+.sw-C{background:radial-gradient(circle at 40% 40%,rgba(225,205,170,.5) 0%,transparent 50%),#3a2820}
+.sw-D{background:radial-gradient(circle at 35% 50%,rgba(145,165,210,.5) 0%,transparent 50%),#1c2030}
+.sw-E{background:radial-gradient(circle at 40% 30%,rgba(165,155,80,.5) 0%,transparent 40%),#111a0e}
+.sw-F{background:radial-gradient(circle at 30% 40%,rgba(215,185,165,.4) 0%,transparent 40%),#5a2522}
+.sw-G{background:linear-gradient(135deg,#e8e0d0,#d0c8b8)}
+.sw-H{background:radial-gradient(circle at 40% 40%,rgba(180,180,180,.4) 0%,transparent 50%),#1e1e1e}
+
+/* ═══════════════════════════════════════════════
+   BIG CTA
+══════════════════════════════════════════════════ */
+.cta{padding:160px 64px;background:var(--ink3);position:relative;overflow:hidden;text-align:center;border-top:1px solid var(--border)}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse at center,rgba(200,163,86,.08) 0%,transparent 70%);pointer-events:none}
+.cta-tag{font-size:.72rem;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
+.cta-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,9vw,9rem);letter-spacing:.04em;line-height:.95;margin-bottom:24px}
+.cta-sub{font-size:1rem;font-weight:300;color:var(--dust);max-width:560px;margin:0 auto 52px;line-height:1.75}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-micro{display:flex;gap:24px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.cta-micro-item{font-size:.75rem;font-weight:500;color:var(--dust);display:flex;align-items:center;gap:6px}
+.cta-micro-item::before{content:'✓';color:var(--gold)}
+
+/* ═══════════════════════════════════════════════
+   CONTACT
+══════════════════════════════════════════════════ */
+.con{background:var(--ink);border-top:1px solid var(--border)}
+.con-inner{max-width:1300px;margin:0 auto;padding:140px 64px;display:grid;grid-template-columns:1fr 1.3fr;gap:100px;align-items:start}
+.con-info h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,5rem);letter-spacing:.04em;line-height:1;margin-bottom:20px}
+.con-info p{font-size:.92rem;font-weight:300;color:var(--dust);line-height:1.85;margin-bottom:52px;max-width:380px}
+.con-deets{display:flex;flex-direction:column;gap:28px}
+.con-d{display:flex;align-items:flex-start;gap:16px}
+.con-d-ico{width:42px;height:42px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0}
+.con-d-ico svg{width:18px;height:18px}
+.con-d-lbl{font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--dust);margin-bottom:4px}
+.con-d-val{font-size:.92rem;color:var(--cream)}
+.con-form{display:flex;flex-direction:column;gap:18px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:7px}
+.fl{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dust)}
+.fi,.fsel,.fta{padding:14px 16px;background:var(--ink2);border:1px solid var(--border);border-radius:4px;color:var(--cream);font-family:'Inter',sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,background .3s;resize:none}
+.fi:focus,.fsel:focus,.fta:focus{border-color:var(--gold);background:rgba(200,163,86,.04)}
+.fsel{appearance:none;cursor:none}
+.fta{height:110px}
+.fsub{padding:16px 40px;background:var(--gold);color:var(--ink);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;cursor:none;transition:background .3s,transform .25s,box-shadow .3s;align-self:flex-start}
+.fsub:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 20px 40px rgba(200,163,86,.2)}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════ */
+footer{background:var(--ink2);border-top:1px solid var(--border);padding:72px 64px 40px}
+.ft-top{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:60px;padding-bottom:60px;border-bottom:1px solid var(--border)}
+.ft-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.4em;margin-bottom:18px}
+.ft-logo em{color:var(--gold);font-style:normal}
+.ft-tag{font-size:.88rem;font-weight:300;color:var(--dust);line-height:1.75;max-width:280px;margin-bottom:28px}
+.ft-soc{display:flex;gap:10px}
+.ft-sb{width:36px;height:36px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--dust);transition:border-color .3s,color .3s,background .3s}
+.ft-sb:hover{border-color:var(--gold);color:var(--gold);background:rgba(200,163,86,.06)}
+.ft-sb svg{width:15px;height:15px}
+.ft-col h4{font-size:.7rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+.ft-links{display:flex;flex-direction:column;gap:12px;list-style:none}
+.ft-links a{font-size:.85rem;color:var(--dust);transition:color .3s,padding-left .3s}
+.ft-links a:hover{color:var(--cream);padding-left:5px}
+.ft-bot{max-width:1300px;margin:0 auto;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.ft-copy{font-size:.76rem;color:var(--dust)}
+.ft-copy em{color:var(--gold3);font-style:normal}
+.ft-badge{font-size:.74rem;color:var(--dust);display:flex;align-items:center;gap:6px}
+.ft-badge svg{width:13px;height:13px;color:var(--gold)}
+
+/* ═══════════════════════════════════════════════
+   SECTION SHARED STYLES
+══════════════════════════════════════════════════ */
+.stag{font-size:.7rem;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.stag::before{content:'';width:28px;height:1px;background:var(--gold);flex-shrink:0}
+.sh2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5.5vw,6rem);letter-spacing:.04em;line-height:.95;margin-bottom:18px}
+.ssub{font-size:1rem;font-weight:300;color:var(--dust);line-height:1.8;max-width:520px}
+
+/* ═══════════════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════════════════ */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.on{opacity:1;transform:translateY(0)}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
+.rv.d4{transition-delay:.4s}.rv.d5{transition-delay:.5s}.rv.d6{transition-delay:.6s}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════ */
+@keyframes fup{to{opacity:1;transform:translateY(0)}}
+@keyframes wipeUp{to{transform:translateY(0);opacity:1}}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media(max-width:1200px){
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .gal-grid{grid-template-columns:repeat(2,1fr)}
+  .gc1,.gc2,.gc3,.gc4,.gc5{grid-column:span 1;grid-row:span 1;aspect-ratio:4/3}
+  .tst-grid{grid-template-columns:1fr 1fr}
+  .how-grid{grid-template-columns:repeat(2,1fr);gap:40px}
+  .how-grid::before{display:none}
+  .stats-inner{grid-template-columns:repeat(2,1fr);gap:40px}
+  .ft-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  nav{padding:18px 24px}
+  nav.stuck{padding:14px 24px}
+  .nav-links,.nav-right .nav-btn{display:none}
+  .nav-ham{display:flex}
+  .hero-l{padding:140px 24px 80px}
+  .hero-r{display:none}
+  .hero-trust{gap:24px}
+  .svc{padding:100px 24px}
+  .svc-grid{grid-template-columns:1fr;gap:2px}
+  .stats-inner{padding:80px 24px}
+  .stat{border-right:none;border-bottom:1px solid var(--border);padding:24px 0}
+  .stat:last-child{border-bottom:none}
+  .gal-head{padding:100px 24px 40px}
+  .gal-grid{grid-template-columns:1fr;gap:3px}
+  .gc1,.gc2,.gc3,.gc4,.gc5{aspect-ratio:4/3}
+  .tst{padding:100px 24px}
+  .tst-grid{grid-template-columns:1fr}
+  .how{padding:100px 24px}
+  .how-grid{grid-template-columns:1fr;gap:32px}
+  .mat{padding:80px 24px}
+  .cta{padding:100px 24px}
+  .con-inner{padding:100px 24px;grid-template-columns:1fr;gap:60px}
+  footer{padding:60px 24px 32px}
+  .ft-top{grid-template-columns:1fr;gap:40px}
+  .ft-bot{flex-direction:column;align-items:flex-start}
+  #wa{bottom:20px;right:20px;padding:10px 16px 10px 12px;font-size:.72rem}
+  body{cursor:auto}
+  #C,#CF{display:none}
+}
+@media(max-width:600px){
+  .hero-trust{flex-wrap:wrap}
+  .frow{grid-template-columns:1fr}
+  .cta-micro{flex-direction:column;align-items:center}
+  .hero-btns{flex-direction:column;align-items:flex-start}
+}
+  </style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="C"></div><div id="CF"></div>
+
+<!-- PROGRESS -->
+<div id="prog"></div>
+
+<!-- LOADER -->
+<div id="LD">
+  <div class="ld-logo">PLANET GRANITE</div>
+  <div class="ld-bar"><div class="ld-bar-fill"></div></div>
+</div>
+
+<!-- WHATSAPP FLOAT -->
+<a id="wa" href="https://wa.me/27000000000?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20stone%20surface%20project" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.558 4.14 1.535 5.875L.057 23.5l5.797-1.521A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.677-.502-5.212-1.38l-.374-.22-3.442.903.919-3.353-.241-.386A9.945 9.945 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+  WhatsApp Us
+</a>
+
+<!-- MOBILE MENU -->
+<div id="mob">
+  <button class="mob-close" id="mobClose">✕</button>
+  <a href="#services" onclick="closeMob()">Services</a>
+  <a href="#gallery"  onclick="closeMob()">Gallery</a>
+  <a href="#process"  onclick="closeMob()">Process</a>
+  <a href="#contact"  onclick="closeMob()">Contact</a>
+  <a href="#contact"  class="btn-prim" onclick="closeMob()" style="font-size:.9rem;margin-top:8px">Get Free Quote</a>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-logo">Planet <em>Granite</em></div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="nav-phone" href="tel:+27000000000">+27 (0) 00 000 0000</a>
+    <a class="nav-btn" href="#contact">Free Quote</a>
+  </div>
+  <button class="nav-ham" id="navHam"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <canvas id="hcanvas"></canvas>
+
+  <div class="hero-veins">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <path d="M-100,200 Q300,80 600,320 T1200,180 T1600,300" stroke="rgba(200,163,86,.8)" stroke-width="1.5" fill="none"/>
+      <path d="M0,500 Q250,340 550,480 T1000,380 T1440,440" stroke="rgba(200,163,86,.5)" stroke-width="1" fill="none"/>
+      <path d="M300,0 Q380,350 340,900" stroke="rgba(200,163,86,.4)" stroke-width="1" fill="none"/>
+      <path d="M1050,0 Q980,280 1020,900" stroke="rgba(200,163,86,.3)" stroke-width=".8" fill="none"/>
+      <path d="M700,0 Q820,200 750,600 T800,900" stroke="rgba(200,163,86,.25)" stroke-width=".6" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="hero-l">
+    <div class="hero-tag">South Africa's Premier Stone Fabricator</div>
+    <h1 class="hero-h1">
+      <div class="w"><span class="wt">STONE.</span></div><br>
+      <div class="w"><span class="wt"><em>CRAFTED.</em></span></div><br>
+      <div class="w"><span class="wt">INSTALLED.</span></div>
+    </h1>
+    <p class="hero-p">CNC precision cutting, custom granite fabrication &amp; expert installation. Kitchen countertops, vanities, staircases and bespoke stone furniture — built to outlast trends.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-prim">Get a Free Quote</a>
+      <a href="#gallery"  class="btn-ghost">View Our Work</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <span class="trust-num" data-target="2400" id="tc1">2,400</span>
+        <span class="trust-lbl">Projects Done</span>
+      </div>
+      <div class="trust-item" style="padding-left:36px;border-left:1px solid var(--border)">
+        <span class="trust-num" data-target="15" id="tc2">15</span>
+        <span class="trust-lbl">Years Experience</span>
+      </div>
+      <div class="trust-item" style="padding-left:36px;border-left:1px solid var(--border)">
+        <span class="trust-num" data-target="60" id="tc3">60</span>
+        <span class="trust-lbl">Stone Varieties</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-r">
+    <div class="hero-stone-art">
+      <div class="hero-slab hs1 g-blk"></div>
+      <div class="hero-slab hs2 g-blu"></div>
+      <div class="hero-slab hs3 g-brn"></div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-track"></div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="mq">
+  <div class="mq-track">
+    <div class="mq-item">Kitchen Countertops</div>
+    <div class="mq-item">CNC Waterjet Cutting</div>
+    <div class="mq-item">Vanity Tops</div>
+    <div class="mq-item">Splashbacks</div>
+    <div class="mq-item">Staircases</div>
+    <div class="mq-item">Custom Furniture</div>
+    <div class="mq-item">Windowsills</div>
+    <div class="mq-item">Braai Areas</div>
+    <div class="mq-item">Free Site Quotes</div>
+    <div class="mq-item">Kitchen Countertops</div>
+    <div class="mq-item">CNC Waterjet Cutting</div>
+    <div class="mq-item">Vanity Tops</div>
+    <div class="mq-item">Splashbacks</div>
+    <div class="mq-item">Staircases</div>
+    <div class="mq-item">Custom Furniture</div>
+    <div class="mq-item">Windowsills</div>
+    <div class="mq-item">Braai Areas</div>
+    <div class="mq-item">Free Site Quotes</div>
+  </div>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<section class="svc" id="services">
+  <div class="svc-head">
+    <div>
+      <div class="stag rv">What We Do</div>
+      <h2 class="sh2 rv d1">Every Surface.<br><em style="color:var(--gold)">Perfected.</em></h2>
+    </div>
+    <p class="ssub rv d2">From a sleek kitchen worktop to an intricate CNC-cut masterpiece — we fabricate and install premium stone surfaces across South Africa.</p>
+  </div>
+  <div class="svc-grid">
+
+    <div class="svc-card rv d1">
+      <div class="svc-num">01</div>
+      <div class="svc-ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="22" width="40" height="18" rx="2"/><path d="M4 30h40"/><path d="M14 22V16a10 10 0 0120 0v6"/><path d="M22 34v4M26 34v4"/></svg></div>
+      <div class="svc-name">Kitchen Countertops</div>
+      <div class="svc-desc">Heat-resistant, scratch-proof granite worktops precision-fitted to your kitchen. Choose from 60+ stone varieties. From R1,500/m².</div>
+      <div class="svc-link">Enquire Now <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
+    </div>
+
+    <div class="svc-card rv d2">
+      <div class="svc-num">02</div>
+      <div class="svc-ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="24" r="6"/><path d="M24 6v4M24 38v4M6 24h4M38 24h4M11 11l2.8 2.8M34.2 34.2 37 37M37 11l-2.8 2.8M13.8 34.2 11 37"/><circle cx="24" cy="24" r="14" stroke-dasharray="4 6" opacity=".4"/></svg></div>
+      <div class="svc-name">CNC Waterjet Cutting</div>
+      <div class="svc-desc">State-of-the-art CNC waterjet technology for intricate cutouts, sink openings, decorative patterns, and shapes conventional tools can't achieve.</div>
+      <div class="svc-link">Enquire Now <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
+    </div>
+
+    <div class="svc-card rv d3">
+      <div class="svc-num">03</div>
+      <div class="svc-ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="32" height="32" rx="16"/><path d="M24 16v8l5 5"/><path d="M16 24h4M28 24h4M24 16v-4M24 36v4"/></svg></div>
+      <div class="svc-name">Vanities &amp; Bathrooms</div>
+      <div class="svc-desc">Transform your bathroom with elegant stone vanity tops, shower niches, bath surrounds, and basin cutouts. Waterproof and timeless.</div>
+      <div class="svc-link">Enquire Now <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
+    </div>
+
+    <div class="svc-card rv d1">
+      <div class="svc-num">04</div>
+      <div class="svc-ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="40" height="8" rx="1"/><path d="M8 18v22M40 18v22M8 36h32M8 28h32"/></svg></div>
+      <div class="svc-name">Splashbacks</div>
+      <div class="svc-desc">Seamless full-height stone splashbacks — hygienic, dramatic, and completely maintenance free. The centrepiece your kitchen deserves.</div>
+      <div class="svc-link">Enquire Now <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
+    </div>
+
+    <div class="svc-card rv d2">
+      <div class="svc-num">05</div>
+      <div class="svc-ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 40l6-8 6-8 6-8 6-8"/><path d="M6 40h8V32h8V24h8V16h8"/><path d="M6 44h36"/></svg></div>
+      <div class="svc-name">Staircases</div>
+      <div class="svc-desc">Grand staircase treads, risers, and landings in premium granite — the architectural statement that defines your entire interior.</div>
+      <div class="svc-link">Enquire Now <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
+    </div>
+
+    <div class="svc-card rv d3">
+      <div class="svc-num">06</div>
+      <div class="svc-ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="28" width="36" height="6" rx="1"/><path d="M10 28V20M38 28V20"/><rect x="8" y="18" width="32" height="4" rx="1"/><path d="M14 28V24M34 28V24"/><path d="M6 34h36"/></svg></div>
+      <div class="svc-name">Custom Stone Furniture</div>
+      <div class="svc-desc">Bespoke dining tables, coffee tables, outdoor entertainment areas, and one-of-a-kind statement pieces handcrafted from the world's finest stone.</div>
+      <div class="svc-link">Enquire Now <span class="svc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat rv">
+      <div><span class="stat-big" data-target="15" id="s1">0</span><span class="stat-suf">+</span></div>
+      <span class="stat-lbl">Years of Excellence</span>
+    </div>
+    <div class="stat rv d1">
+      <div><span class="stat-big" data-target="2400" id="s2">0</span><span class="stat-suf">+</span></div>
+      <span class="stat-lbl">Projects Completed</span>
+    </div>
+    <div class="stat rv d2">
+      <div><span class="stat-big" data-target="60" id="s3">0</span><span class="stat-suf">+</span></div>
+      <span class="stat-lbl">Stone Varieties</span>
+    </div>
+    <div class="stat rv d3">
+      <div><span class="stat-big" data-target="99" id="s4">0</span><span class="stat-suf">%</span></div>
+      <span class="stat-lbl">Client Satisfaction</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GALLERY ══ -->
+<div class="gal" id="gallery">
+  <div class="gal-head">
+    <div class="stag rv">Our Work</div>
+    <h2 class="sh2 rv d1">Stone that<br><em style="color:var(--gold)">speaks for itself.</em></h2>
+  </div>
+  <div class="gal-grid">
+
+    <div class="gc gc1 rv">
+      <div class="gc-bg g-blk" style="position:absolute;inset:0"></div>
+      <div class="gc-layer"></div>
+      <div class="gc-info">
+        <div class="gc-title">Black Galaxy Kitchen Island</div>
+        <div class="gc-sub">Sandton, Johannesburg</div>
+      </div>
+    </div>
+
+    <div class="gc gc2 rv d1">
+      <div class="gc-bg g-wht" style="position:absolute;inset:0"></div>
+      <div class="gc-layer" style="background:linear-gradient(to top,rgba(30,28,25,.9) 0%,rgba(30,28,25,.2) 50%,transparent)"></div>
+      <div class="gc-info">
+        <div class="gc-title">White Ice Bathroom Suite</div>
+        <div class="gc-sub">Camps Bay, Cape Town</div>
+      </div>
+    </div>
+
+    <div class="gc gc3 rv d2">
+      <div class="gc-bg g-grn" style="position:absolute;inset:0"></div>
+      <div class="gc-layer"></div>
+      <div class="gc-info">
+        <div class="gc-title">Ubatuba Feature Wall</div>
+        <div class="gc-sub">Umhlanga, Durban</div>
+      </div>
+    </div>
+
+    <div class="gc gc4 rv d1">
+      <div class="gc-bg g-brn" style="position:absolute;inset:0"></div>
+      <div class="gc-layer"></div>
+      <div class="gc-info">
+        <div class="gc-title">Baltic Brown Kitchen — 4.8m Island</div>
+        <div class="gc-sub">Pretoria East, GP</div>
+      </div>
+    </div>
+
+    <div class="gc gc5 rv d2">
+      <div class="gc-bg g-blu" style="position:absolute;inset:0"></div>
+      <div class="gc-layer"></div>
+      <div class="gc-info">
+        <div class="gc-title">Blue Pearl Staircase</div>
+        <div class="gc-sub">Stellenbosch, WC</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ TESTIMONIALS ══ -->
+<div class="tst">
+  <div class="tst-inner">
+    <div class="tst-head">
+      <div class="stag rv">Client Stories</div>
+      <h2 class="sh2 rv d1">Don't take<br>our word for it.</h2>
+    </div>
+    <div class="tst-grid">
+
+      <div class="tst-card rv d1">
+        <div class="tst-qmark">"</div>
+        <div class="tst-stars"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg></div>
+        <div class="tst-q">"Planet Granite transformed our entire kitchen. The Black Galaxy countertops are absolutely breathtaking — every single guest comments on them. The team was professional, efficient, and left the place spotless."</div>
+        <div class="tst-author">
+          <div class="tst-av">SV</div>
+          <div><div class="tst-name">Sarah van der Berg</div><div class="tst-loc">Sandton, Johannesburg</div></div>
+        </div>
+      </div>
+
+      <div class="tst-card rv d2">
+        <div class="tst-qmark">"</div>
+        <div class="tst-stars"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg></div>
+        <div class="tst-q">"We used Planet Granite for CNC waterjet cutting on our restaurant's feature wall. The precision was incredible — complex geometric patterns that other suppliers said were impossible. Absolute perfection."</div>
+        <div class="tst-author">
+          <div class="tst-av">MN</div>
+          <div><div class="tst-name">Michael Nkosi</div><div class="tst-loc">V&amp;A Waterfront, Cape Town</div></div>
+        </div>
+      </div>
+
+      <div class="tst-card rv d3">
+        <div class="tst-qmark">"</div>
+        <div class="tst-stars"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.4l-3.7 2 .7-4.1L2 5.4l4.2-.8L8 1z"/></svg></div>
+        <div class="tst-q">"Our Blue Pearl staircase is the centrepiece of our entire home. Worth every rand. Planet Granite's team guided us through every decision and installed it flawlessly. We couldn't be happier."</div>
+        <div class="tst-author">
+          <div class="tst-av">TP</div>
+          <div><div class="tst-name">Thandi &amp; Johan Pretorius</div><div class="tst-loc">Umhlanga, KZN</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROCESS ══ -->
+<div class="how" id="process">
+  <div class="how-inner">
+    <div class="how-head">
+      <div class="stag rv">How It Works</div>
+      <h2 class="sh2 rv d1">From vision<br>to installation.</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-step rv d1">
+        <div class="how-circ">01</div>
+        <div class="how-title">Free Site Visit &amp; Quote</div>
+        <div class="how-desc">We visit your property, take precise measurements, and deliver a detailed quote within 48 hours — completely free, no obligation.</div>
+      </div>
+      <div class="how-step rv d2">
+        <div class="how-circ">02</div>
+        <div class="how-title">Stone Selection</div>
+        <div class="how-desc">Choose from 60+ granite, marble, and engineered stone varieties. We help you find the perfect match for your aesthetic and budget.</div>
+      </div>
+      <div class="how-step rv d3">
+        <div class="how-circ">03</div>
+        <div class="how-title">CNC Fabrication</div>
+        <div class="how-desc">Your stone is precision-cut and polished in our workshop using state-of-the-art CNC waterjet machinery. Zero compromise on quality.</div>
+      </div>
+      <div class="how-step rv d4">
+        <div class="how-circ">04</div>
+        <div class="how-title">Expert Installation</div>
+        <div class="how-desc">Our installation team fits your surfaces with care and precision. We clean up fully and brief you on sealing and maintenance.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MATERIALS ══ -->
+<div class="mat">
+  <div class="mat-inner">
+    <div class="mat-lbl rv">Stone varieties we work with</div>
+    <div class="mat-row">
+      <div class="mat-pill rv d1"><div class="mat-sw sw-A"></div><span class="mat-n">Black Galaxy</span></div>
+      <div class="mat-pill rv d2"><div class="mat-sw sw-B"></div><span class="mat-n">White Ice</span></div>
+      <div class="mat-pill rv d3"><div class="mat-sw sw-C"></div><span class="mat-n">Baltic Brown</span></div>
+      <div class="mat-pill rv d4"><div class="mat-sw sw-D"></div><span class="mat-n">Blue Pearl</span></div>
+      <div class="mat-pill rv d5"><div class="mat-sw sw-E"></div><span class="mat-n">Ubatuba</span></div>
+      <div class="mat-pill rv d6"><div class="mat-sw sw-F"></div><span class="mat-n">Imperial Red</span></div>
+      <div class="mat-pill rv d1"><div class="mat-sw sw-G"></div><span class="mat-n">Kashmir White</span></div>
+      <div class="mat-pill rv d2"><div class="mat-sw sw-H"></div><span class="mat-n">Steel Grey</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CTA ══ -->
+<div class="cta">
+  <div class="cta-glow"></div>
+  <div class="cta-tag rv">Start Your Project Today</div>
+  <h2 class="cta-h2 rv d1">YOUR DREAM<br><em style="color:var(--gold)">SURFACE AWAITS.</em></h2>
+  <p class="cta-sub rv d2">Get a free site measurement and quote within 48 hours. Serving Johannesburg, Cape Town, Durban, Pretoria and surrounding areas nationwide.</p>
+  <div class="cta-btns rv d3">
+    <a href="#contact" class="btn-prim">Get a Free Quote Now</a>
+    <a href="tel:+27000000000" class="btn-ghost">Call +27 00 000 0000</a>
+  </div>
+  <div class="cta-micro rv d4">
+    <span class="cta-micro-item">Free site measurement</span>
+    <span class="cta-micro-item">Quote in 48 hours</span>
+    <span class="cta-micro-item">Expert installation</span>
+    <span class="cta-micro-item">Satisfaction guaranteed</span>
+  </div>
+</div>
+
+<!-- ══ CONTACT ══ -->
+<div class="con" id="contact">
+  <div class="con-inner">
+    <div class="con-info">
+      <div class="stag rv">Get In Touch</div>
+      <h2 class="rv d1">Let's build<br>something<br><em style="color:var(--gold);font-style:normal">extraordinary.</em></h2>
+      <p class="rv d2">Whether you're renovating your kitchen, designing a luxury bathroom, or commissioning a bespoke stone masterpiece — we'd love to hear about your project.</p>
+      <div class="con-deets">
+        <div class="con-d rv d1">
+          <div class="con-d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.84 10a19.79 19.79 0 01-3.07-8.67A2 2 0 012.75 1.27h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 9a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><div class="con-d-lbl">Phone</div><div class="con-d-val">+27 (0) 00 000 0000</div></div>
+        </div>
+        <div class="con-d rv d2">
+          <div class="con-d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div><div class="con-d-lbl">Email</div><div class="con-d-val">info@planetgranite.co.za</div></div>
+        </div>
+        <div class="con-d rv d3">
+          <div class="con-d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><div class="con-d-lbl">Coverage</div><div class="con-d-val">JHB · CPT · DBN · PTA &amp; Nationwide</div></div>
+        </div>
+        <div class="con-d rv d4">
+          <div class="con-d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+          <div><div class="con-d-lbl">Hours</div><div class="con-d-val">Mon–Fri 8am–5pm · Sat 9am–1pm</div></div>
+        </div>
+      </div>
+    </div>
+
+    <form class="con-form rv d2" onsubmit="submitForm(event)">
+      <div class="frow">
+        <div class="fg"><label class="fl">First Name</label><input class="fi" type="text" placeholder="John" required/></div>
+        <div class="fg"><label class="fl">Last Name</label><input class="fi" type="text" placeholder="Smith" required/></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" placeholder="john@example.com" required/></div>
+        <div class="fg"><label class="fl">Phone / WhatsApp</label><input class="fi" type="tel" placeholder="+27 00 000 0000"/></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Service Required</label>
+        <select class="fsel">
+          <option value="">Select a service…</option>
+          <option>Kitchen Countertops</option>
+          <option>CNC Waterjet Cutting</option>
+          <option>Vanities &amp; Bathrooms</option>
+          <option>Splashbacks</option>
+          <option>Staircases</option>
+          <option>Custom Stone Furniture</option>
+          <option>Multiple Services</option>
+          <option>Other / Not Sure</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Project Location</label>
+        <input class="fi" type="text" placeholder="City, Province"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Tell Us About Your Project</label>
+        <textarea class="fta" placeholder="Describe your project — stone type in mind, approximate size, timeline…"></textarea>
+      </div>
+      <button type="submit" class="fsub" id="fsub">Send Enquiry →</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft-top">
+    <div class="ft-brand">
+      <div class="ft-logo">Planet <em>Granite</em></div>
+      <p class="ft-tag">South Africa's premier stone fabrication specialist. Transforming granite, marble and engineered stone into extraordinary surfaces since 2009.</p>
+      <div class="ft-soc">
+        <a class="ft-sb" href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        <a class="ft-sb" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a class="ft-sb" href="#" aria-label="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.135-1.868 3.135-4.561 0-2.385-1.715-4.052-4.161-4.052-2.834 0-4.498 2.125-4.498 4.322 0 .856.33 1.772.741 2.273a.3.3 0 01.069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg></a>
+        <a class="ft-sb" href="https://wa.me/27000000000" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
+      </div>
+    </div>
+    <div class="ft-col">
+      <h4>Services</h4>
+      <ul class="ft-links">
+        <li><a href="#services">Kitchen Countertops</a></li>
+        <li><a href="#services">CNC Waterjet Cutting</a></li>
+        <li><a href="#services">Vanities &amp; Bathrooms</a></li>
+        <li><a href="#services">Splashbacks</a></li>
+        <li><a href="#services">Staircases</a></li>
+        <li><a href="#services">Custom Furniture</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Company</h4>
+      <ul class="ft-links">
+        <li><a href="#services">About Us</a></li>
+        <li><a href="#gallery">Portfolio</a></li>
+        <li><a href="#process">Our Process</a></li>
+        <li><a href="#contact">Get a Quote</a></li>
+        <li><a href="#contact">Careers</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Locations</h4>
+      <ul class="ft-links">
+        <li><a href="#contact">Johannesburg</a></li>
+        <li><a href="#contact">Cape Town</a></li>
+        <li><a href="#contact">Durban</a></li>
+        <li><a href="#contact">Pretoria</a></li>
+        <li><a href="#contact">Port Elizabeth</a></li>
+        <li><a href="#contact">Bloemfontein</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <div class="ft-copy">© 2025 Planet Granite. All rights reserved. <em>·</em> Proudly South African.</div>
+    <div class="ft-badge">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l1.4 2.9 3.2.5-2.3 2.2.5 3.2L8 8.3 5.2 9.8l.5-3.2L3.4 4.4l3.2-.5L8 1z"/></svg>
+      CIDB Registered · Licensed Fabricator
+    </div>
+  </div>
+</footer>
+
+<!-- ══ JAVASCRIPT ══ -->
+<script>
+/* ─── LOADER ─── */
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('LD').classList.add('out'), 1900);
+});
+
+/* ─── PROGRESS BAR ─── */
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+  prog.style.width=pct+'%';
+},{passive:true});
+
+/* ─── CURSOR ─── */
+const C=document.getElementById('C'),CF=document.getElementById('CF');
+let mx=0,my=0,fx=0,fy=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  C.style.left=mx+'px';C.style.top=my+'px';
+});
+document.addEventListener('mousedown',()=>document.body.classList.add('cur-click'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('cur-click'));
+(function tick(){fx+=(mx-fx)*.1;fy+=(my-fy)*.1;CF.style.left=fx+'px';CF.style.top=fy+'px';requestAnimationFrame(tick)})();
+document.querySelectorAll('a,button,.svc-card,.gc,.tst-card,.how-step,.mat-pill').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('cur-hover'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('cur-hover'));
+});
+
+/* ─── NAV SCROLL ─── */
+const nav2=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav2.classList.toggle('stuck',window.scrollY>60),{passive:true});
+
+/* ─── MOBILE MENU ─── */
+document.getElementById('navHam').addEventListener('click',()=>document.getElementById('mob').classList.add('open'));
+document.getElementById('mobClose').addEventListener('click',closeMob);
+function closeMob(){document.getElementById('mob').classList.remove('open')}
+
+/* ─── SCROLL REVEAL ─── */
+const rv=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')});
+},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>rv.observe(el));
+
+/* ─── COUNTER ANIMATION ─── */
+function countUp(el,target,dur=2000){
+  const start=performance.now();
+  const tick=now=>{
+    const p=Math.min((now-start)/dur,1);
+    const eased=1-Math.pow(1-p,4);
+    el.textContent=Math.round(eased*target).toLocaleString();
+    if(p<1)requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+const cObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const t=+e.target.dataset.target;
+      countUp(e.target,t);
+      cObs.unobserve(e.target);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('[data-target]').forEach(el=>cObs.observe(el));
+
+/* ─── CANVAS PARTICLES ─── */
+const cv=document.getElementById('hcanvas'),ctx=cv.getContext('2d');
+let W,H,pts=[];
+function rsz(){W=cv.width=cv.offsetWidth;H=cv.height=cv.offsetHeight;}
+window.addEventListener('resize',rsz,{passive:true});rsz();
+
+class Pt{
+  constructor(){this.init()}
+  init(){
+    this.x=Math.random()*W;this.y=Math.random()*H;
+    this.vx=(Math.random()-.5)*.35;this.vy=(Math.random()-.5)*.35;
+    this.r=Math.random()*1.6+.4;
+    this.a=Math.random()*.5+.1;
+    this.life=0;this.ml=Math.random()*400+150;
+  }
+  step(){
+    this.x+=this.vx;this.y+=this.vy;this.life++;
+    if(this.life>this.ml||this.x<0||this.x>W||this.y<0||this.y>H)this.init();
+  }
+  draw(){
+    const p=this.life/this.ml;
+    const f=p<.1?p*10:p>.9?(1-p)*10:1;
+    ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(200,163,86,${this.a*f})`;ctx.fill();
+  }
+}
+for(let i=0;i<100;i++)pts.push(new Pt());
+(function loop(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.step();p.draw()});requestAnimationFrame(loop)})();
+
+/* ─── 3D TILT CARDS ─── */
+document.querySelectorAll('.svc-card,.tst-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`translateY(-6px) rotateX(${-y*8}deg) rotateY(${x*8}deg)`;
+    card.style.transformOrigin='center';
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform='';});
+});
+
+/* ─── MAGNETIC BUTTONS ─── */
+document.querySelectorAll('.btn-prim,.btn-ghost,.fsub,.nav-btn').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const dx=(e.clientX-(r.left+r.width/2))*.25;
+    const dy=(e.clientY-(r.top+r.height/2))*.25;
+    btn.style.transform=`translate(${dx}px,${dy}px)`;
+  });
+  btn.addEventListener('mouseleave',()=>btn.style.transform='');
+});
+
+/* ─── FORM SUBMIT ─── */
+function submitForm(e){
+  e.preventDefault();
+  const btn=document.getElementById('fsub');
+  btn.textContent='Sending…';btn.style.opacity='.65';
+  setTimeout(()=>{
+    btn.textContent='Enquiry Sent ✓';
+    btn.style.background='#1a4a2a';btn.style.color='#a8e6bc';btn.style.opacity='1';
+    setTimeout(()=>{
+      btn.textContent='Send Enquiry →';
+      btn.style.background='';btn.style.color='';
+      e.target.reset();
+    },3500);
+  },1400);
+}
+
+/* ─── SMOOTH PARALLAX ON HERO SLABS ─── */
+window.addEventListener('scroll',()=>{
+  const sy=window.scrollY;
+  const s1=document.querySelector('.hs1');
+  const s2=document.querySelector('.hs2');
+  const s3=document.querySelector('.hs3');
+  if(s1)s1.style.marginTop=sy*.06+'px';
+  if(s2)s2.style.marginTop=sy*.1+'px';
+  if(s3)s3.style.marginTop=sy*.04+'px';
+},{passive:true});
+</script>
+</body>
+</html>
