@@ -1,6 +1,6 @@
 /* ============================================================
    Instant Magnets — main.js
-   Handles: nav scroll/mobile, form validation, form submission
+   Handles: nav scroll/mobile, reveal-on-scroll, form validation & submit
    ============================================================ */
 
 (function () {
@@ -23,7 +23,6 @@
     document.body.style.overflow = open ? '' : 'hidden';
   });
 
-  // Close mobile nav when a link is tapped
   mobileNav.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       burger.setAttribute('aria-expanded', 'false');
@@ -32,7 +31,6 @@
     });
   });
 
-  // Close on Escape
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && mobileNav.classList.contains('open')) {
       burger.setAttribute('aria-expanded', 'false');
@@ -42,6 +40,24 @@
     }
   });
 
+  /* ── Reveal on scroll (brand signature) ─────────────────────── */
+  const reveals = document.querySelectorAll('.reveal');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReduced || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => io.observe(el));
+  }
+
   /* ── Form validation & submission ───────────────────────────── */
   const form       = document.getElementById('booking-form');
   const submitBtn  = document.getElementById('submit-btn');
@@ -50,14 +66,9 @@
 
   if (!form) return;
 
-  function getGroup(field) {
-    return document.getElementById('group-' + field.id.replace('event-', 'event-'));
-  }
-
   function showError(field, show) {
     const group = field.closest('.form-group');
-    if (!group) return;
-    group.classList.toggle('has-error', show);
+    if (group) group.classList.toggle('has-error', show);
   }
 
   function isValidEmail(val) {
@@ -68,21 +79,21 @@
     let valid = true;
 
     const name = document.getElementById('name');
-    if (!name.value.trim()) { showError(name, true);  valid = false; }
-    else                     { showError(name, false); }
+    if (!name.value.trim()) { showError(name, true); valid = false; }
+    else                    { showError(name, false); }
 
     const email = document.getElementById('email');
-    if (!isValidEmail(email.value.trim())) { showError(email, true);  valid = false; }
+    if (!isValidEmail(email.value.trim())) { showError(email, true); valid = false; }
     else                                   { showError(email, false); }
 
     const eventType = document.getElementById('event-type');
-    if (!eventType.value) { showError(eventType, true);  valid = false; }
+    if (!eventType.value) { showError(eventType, true); valid = false; }
     else                  { showError(eventType, false); }
 
     return valid;
   }
 
-  // Validate on blur for each required field
+  // Validate on blur for required fields
   ['name', 'email', 'event-type'].forEach(id => {
     const field = document.getElementById(id);
     if (!field) return;
@@ -99,20 +110,16 @@
     errorMsg.classList.remove('error');
 
     if (!validateForm()) {
-      // Move focus to first invalid field
       const firstError = form.querySelector('.has-error input, .has-error select');
       if (firstError) firstError.focus();
       return;
     }
 
-    // Loading state
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
 
     try {
       await submitForm(new FormData(form));
-
-      // Success
       submitBtn.style.display = 'none';
       successMsg.classList.add('success');
       form.reset();
@@ -129,33 +136,24 @@
    *
    * Option A — Formspree (simplest, no server needed):
    *   1. Sign up at https://formspree.io and create a form
-   *   2. Replace the fetch URL with your Formspree endpoint
-   *   3. Add method="POST" and action="https://formspree.io/f/YOUR_FORM_ID"
-   *      to the <form> tag if you prefer HTML-native submission
+   *   2. Uncomment the fetch block below and set YOUR_FORM_ID
    *
    * Option B — Netlify Forms:
-   *   1. Add `netlify` attribute to <form> and `data-netlify="true"`
-   *   2. Replace the fetch below with a standard form POST
+   *   1. Add `netlify` and `data-netlify="true"` to <form> in index.html
+   *   2. Replace the fetch with a standard form POST
    *
-   * Option C — EmailJS (client-side email, no backend):
-   *   1. npm install @emailjs/browser (or add CDN script)
-   *   2. Call emailjs.send('SERVICE_ID', 'TEMPLATE_ID', Object.fromEntries(data))
+   * Option C — EmailJS (client-side, no backend):
+   *   1. Add the EmailJS SDK, then call
+   *      emailjs.send('SERVICE_ID', 'TEMPLATE_ID', Object.fromEntries(formData))
    *
-   * Option D — Custom backend:
-   *   1. Point the fetch URL to your own API endpoint
-   *   2. Adjust headers/body as needed for your server
+   * Option D — Custom backend: point the fetch at your own API endpoint.
    */
   async function submitForm(formData) {
-    // TODO: Replace this stub with real form submission logic (see options above)
-    // Simulating a network request for demonstration:
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Change to reject() to test the error state
-        resolve();
-      }, 1200);
-    });
+    // TODO: Replace this stub with real submission logic (see options above).
+    // Demo: simulate a network request so the success state is visible.
+    await new Promise((resolve) => setTimeout(resolve, 1200));
 
-    // Example Formspree call (uncomment and replace YOUR_FORM_ID):
+    // Example Formspree call (uncomment + set YOUR_FORM_ID):
     // const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
     //   method: 'POST',
     //   body: formData,

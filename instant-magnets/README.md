@@ -61,17 +61,28 @@ The form does client-side validation out of the box. To receive submissions, edi
 
 Instructions for all three are in the `TODO` comment block inside `main.js`.
 
-## Design decisions
+## Brand alignment
 
-| Token | Value | Why |
-|-------|-------|-----|
-| Primary | `#C93058` | Warm rose — festive, celebratory, passes 5.2:1 contrast with white |
-| Gold | `#A16207` | Warm amber — premium feel, passes 4.6:1 on cream |
-| Background | `#FFF8F4` | Warm cream — friendly, not clinical |
-| Heading font | Playfair Display | Elegant serif for a keepsake/memory brand |
-| Script font | Dancing Script | Used for tagline only — handwritten, personal |
-| Body font | Inter | Maximum readability at all sizes |
+This site follows `instant-magnets-brand-guidelines.html` (kept in the repo root). All colours, fonts, the logo lockup, voice, and the magnet-on-fridge treatment are taken directly from those guidelines.
 
-The gallery section uses a `#F4F4F5` background to evoke a stainless fridge surface. Each magnet card is styled as a polaroid with a CSS metallic magnet cap (`::before`) and alternating CSS rotation classes.
+| Token | Value | Role (per guidelines) |
+|-------|-------|-----------------------|
+| Signature Blue | `#44A1C3` | Lead colour — fills, accents, the logo magnets panel |
+| Charcoal | `#3D3D3D` | The "IM" block, dark surfaces, footer |
+| Deep Blue | `#2C7A98` | Hover/pressed + **white-text buttons** (4.8:1 contrast — accessible) |
+| Bright Blue | `#3FB0D8` | Highlights, links, accents on dark |
+| Blue Mist | `#E3F0F5` | Gentle section fills, cards |
+| Cool Paper | `#F6F8F9` | Default page background |
+| Warm Ink | `#33312F` | Body text |
+| Display font | **Jost** (light, wide tracking) | Headings, the logo, captions |
+| Body font | **Outfit** | Paragraphs, UI, labels |
 
-Animations (`float-a/b/c` keyframes) respect `prefers-reduced-motion` — they collapse to instant via the global reduced-motion rule at the bottom of `styles.css`.
+**Colour balance** follows the guideline's 60% neutral / 30% Signature Blue / 10% bright-blue accents — the photos in the magnets are meant to be the colour; the brand frames them.
+
+### Brand signatures reproduced in code
+- **Logo lockup** — the charcoal "IM" block + stacked INSTANT (white) / MAGNETS (blue) panels, recreated in pure CSS (`.lockup`), with reversed and on-blue variants. *TODO: swap for the official logo image when available.*
+- **Magnets** — each framed with a thin white border, a small charcoal "pin" dot, and an italic Jost caption, exactly as specified. Alternating tilt classes match the brand's scatter.
+- **Voice** — warm host, never salesy. Uses the approved phrases ("Snap. Print. Keep.", "Printed & made on-site.", "Pick a frame — we'll handle the rest.").
+- **Subtle noise texture** overlay and **reveal-on-scroll** animations, both from the guidelines. Animations respect `prefers-reduced-motion`.
+
+> Accessibility note: the guidelines use white text on Signature Blue for the large decorative logo panels (fine for large display type). For interactive **buttons** with smaller white text, this site uses **Deep Blue `#2C7A98`** instead, which clears the 4.5:1 WCAG AA threshold.
