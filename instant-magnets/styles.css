@@ -559,15 +559,16 @@ p { max-width: 62ch; }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 28px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 18px;
   align-items: start;
-  margin-top: 16px;
+  padding: 8px 0;
 }
 
+/* Magnet card — landscape format, matches real product */
 .magnet-card {
   background: #fff;
-  padding: 9px 9px 32px;
+  padding: 8px;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-magnet);
   position: relative;
@@ -584,27 +585,61 @@ p { max-width: 62ch; }
   box-shadow: 0 2px 5px rgba(0,0,0,.3);
   z-index: 2;
 }
-.magnet-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 3px; }
-.magnet-card figcaption {
-  position: absolute;
-  bottom: 9px; left: 0; right: 0;
-  text-align: center;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: .82rem;
-  color: rgba(61,61,61,.65);
-}
-.magnet-card:hover { transform: translateY(-8px) rotate(0deg) !important; box-shadow: 0 22px 48px rgba(44,82,100,.26); z-index: 5; }
 
-/* Brand tilt variants */
-.tilt-a { transform: rotate(-5deg); }
-.tilt-b { transform: rotate(3deg);  margin-top: 26px; }
-.tilt-c { transform: rotate(-2deg); }
-.tilt-d { transform: rotate(6deg);  margin-top: 40px; }
-.tilt-e { transform: rotate(-3deg); margin-top: 14px; }
-.tilt-f { transform: rotate(4deg); }
-.tilt-g { transform: rotate(-4deg); margin-top: 30px; }
-.tilt-h { transform: rotate(2deg);  margin-top: 8px; }
+.magnet-card__photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  line-height: 0;
+}
+
+.magnet-card img {
+  width: 100%;
+  aspect-ratio: 3/2;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+}
+
+/* Event-branding text overlaid on the photo (brand product signature) */
+.magnet-card__overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 28px 11px 9px;
+  background: linear-gradient(to top, rgba(255,255,255,.95) 55%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.magnet-card__event-name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: .88rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+  line-height: 1.2;
+}
+.magnet-card__event-detail {
+  font-family: var(--font-display);
+  font-size: .62rem;
+  color: var(--blue-deep);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.magnet-card:hover { transform: translateY(-8px) rotate(0deg) !important; box-shadow: 0 22px 48px rgba(44,82,100,.26); z-index: 10; }
+
+/* Scatter: rotation + vertical offset per card for organic fridge look */
+.tilt-a { transform: rotate(-6deg)  translateY(0px);   z-index: 2; }
+.tilt-b { transform: rotate(5deg)   translateY(34px);  z-index: 3; }
+.tilt-c { transform: rotate(-3deg)  translateY(-14px); z-index: 4; }
+.tilt-d { transform: rotate(8deg)   translateY(20px);  z-index: 2; }
+.tilt-e { transform: rotate(-7deg)  translateY(-22px); z-index: 5; }
+.tilt-f { transform: rotate(4deg)   translateY(40px);  z-index: 3; }
+.tilt-g { transform: rotate(-2deg)  translateY(-8px);  z-index: 1; }
+.tilt-h { transform: rotate(6deg)   translateY(28px);  z-index: 2; }
 
 /* Brand phrase chips */
 .phrases { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 13px; justify-content: center; }
@@ -861,7 +896,7 @@ p { max-width: 62ch; }
   .hero-magnet--c { width: 120px; left: 46%; } .hero-magnet--c img { height: 120px; }
 
   .events-grid   { grid-template-columns: 1fr 1fr; }
-  .gallery-grid  { grid-template-columns: repeat(3, 1fr); }
+  .gallery-grid  { grid-template-columns: repeat(3, 1fr); gap: 36px 16px; }
   .features-grid { grid-template-columns: 1fr 1fr; }
   .footer__grid  { grid-template-columns: 1fr 1fr; gap: 32px; }
 }
@@ -885,7 +920,15 @@ p { max-width: 62ch; }
   .steps::before { display: none; }
 
   .events-grid       { grid-template-columns: 1fr; }
-  .gallery-grid      { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .gallery-grid      { grid-template-columns: repeat(2, 1fr); gap: 30px 14px; }
+  .tilt-a { transform: rotate(-3deg); }
+  .tilt-b { transform: rotate(2deg);  }
+  .tilt-c { transform: rotate(-1deg); }
+  .tilt-d { transform: rotate(3deg);  }
+  .tilt-e { transform: rotate(-2deg); }
+  .tilt-f { transform: rotate(2deg);  }
+  .tilt-g { transform: rotate(-1deg); }
+  .tilt-h { transform: rotate(3deg);  }
   .features-grid     { grid-template-columns: 1fr; }
   .testimonials-grid { grid-template-columns: 1fr; }
 
@@ -900,10 +943,10 @@ p { max-width: 62ch; }
 }
 
 @media (max-width: 440px) {
-  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 22px 10px; }
+  .tilt-a,.tilt-b,.tilt-c,.tilt-d,.tilt-e,.tilt-f,.tilt-g,.tilt-h { transform: none; }
   .hero__actions { flex-direction: column; width: 100%; }
   .hero__actions .btn { width: 100%; }
-  .tilt-a,.tilt-b,.tilt-c,.tilt-d,.tilt-e,.tilt-f,.tilt-g,.tilt-h { margin-top: 0; }
 }
 
 /* ── Reduced motion ─────────────────────────────────────────── */
